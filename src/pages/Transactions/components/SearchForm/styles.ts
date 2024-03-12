@@ -28,8 +28,14 @@ export const SerachFormContainer = styled.form`
     color: ${(props) => props.theme['gray-300']};
     font-weight: bold;
     border-radius: 6px;
+    cursor: pointer;
 
-    &:hover {
+    &:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    &:not(:disabled):hover {
       background: ${(props) => props.theme['green-500']};
       border-color: 1p solid ${(props) => props.theme['green-500']};
       color: ${(props) => props.theme['white']};
