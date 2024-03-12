@@ -8,6 +8,7 @@ export const SerachFormContainer = styled.form`
     border-radius: 6px;
     border: 0;
     background: ${(props) => props.theme['gray-900']};
+    color: ${(props) => props.theme['white']};
 
     padding: 1rem;
 

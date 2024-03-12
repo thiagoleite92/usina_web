@@ -31,6 +31,22 @@
       "category": "Hospedagem",
       "price": 2500,
       "createdAt": "2024-03-11T18:40:42.358Z"
+    },
+    {
+      "description": "Desenvolvimento de app",
+      "category": "Venda",
+      "price": 10000,
+      "type": "income",
+      "createdAt": "2024-03-12T01:06:32.063Z",
+      "id": 5
+    },
+    {
+      "description": "GP",
+      "category": "Lazer",
+      "price": 250,
+      "type": "outcome",
+      "createdAt": "2024-03-12T01:14:49.790Z",
+      "id": 6
     }
   ]
 }
