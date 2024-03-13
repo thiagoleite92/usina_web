@@ -16,6 +16,8 @@ export function Transactions() {
     (context) => context.transactions
   );
 
+  console.log(import.meta.env.BASE_URL);
+
   return (
     <div>
       <Header />

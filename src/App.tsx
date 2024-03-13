@@ -1,12 +1,12 @@
 import { Providers } from './providers/providers';
 import { GlobalStyle } from './styles/global';
-import { Transactions } from './pages/Transactions';
+import { Routes } from './routes';
 
 export function App() {
   return (
     <Providers>
       <GlobalStyle />
-      <Transactions />
+      <Routes />
     </Providers>
   );
 }
