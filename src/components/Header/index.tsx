@@ -1,14 +1,16 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { HeaderContainer, HeaderContent, NewInstallmentButton } from './styles';
 
-import logoImg from '../../assets/logo.svg';
 import { NewInstallmentModal } from '../NewInstallMent';
+import { Profile } from './components/Profile';
 
 export function Header() {
   return (
     <HeaderContainer>
       <HeaderContent>
-        <img src={logoImg} alt="" />
+        <Profile />
+
+        {/* <img src={logoImg} alt="" /> */}
 
         <Dialog.Root>
           <Dialog.Trigger asChild>
