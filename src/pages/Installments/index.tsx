@@ -11,6 +11,8 @@ import { dateFormatter, priceFormatter } from '../../utils/formatter';
 import { useContextSelector } from 'use-context-selector';
 import { InstallmentsContext } from '../../contexts/InstallmentContext';
 import { AuthContext } from '../../hooks/useAuth';
+import { useWindowSize } from '../../hooks/useWindowSize';
+import { InstallmentCard } from './components/InstallmentCard';
 
 export function Installments() {
   const installments = useContextSelector(
@@ -20,41 +22,58 @@ export function Installments() {
 
   const user = useContextSelector(AuthContext, (context) => context?.user);
 
-  console.log(user);
+  const { width } = useWindowSize();
 
   return (
-    <div>
+    <>
       <Header />
       <Summary />
       <InstallmentsContainer>
         <SearchForm />
-        <InstallmentsTable>
-          <tbody>
+        <div style={{ overflowX: 'auto' }}>
+          <InstallmentsTable>
+            {width && width >= 680 && (
+              <tbody>
+                {installments?.map((installment) => {
+                  return (
+                    <tr key={installment?.id}>
+                      <td width="50%">{installment?.description}</td>
+                      <td>
+                        <PriceHighLight variant={installment?.type}>
+                          {installment?.type === 'OUTCOME' && '-'}
+                          {priceFormatter.format(installment?.value / 100)}
+                        </PriceHighLight>
+                      </td>
+                      <td>{installment?.installment}</td>
+                      <td>
+                        {dateFormatter.format(new Date(installment?.createdAt))}
+                      </td>
+                      {user?.role === 'ADMIN' && (
+                        <td>
+                          <GearIcon size={20} />
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            )}
+          </InstallmentsTable>
+        </div>
+        {width && width < 680 && (
+          <>
             {installments?.map((installment) => {
               return (
-                <tr key={installment?.id}>
-                  <td width="50%">{installment?.description}</td>
-                  <td>
-                    <PriceHighLight variant={installment?.type}>
-                      {installment?.type === 'OUTCOME' && '-'}
-                      {priceFormatter.format(installment?.value / 100)}
-                    </PriceHighLight>
-                  </td>
-                  <td>{installment?.installment}</td>
-                  <td>
-                    {dateFormatter.format(new Date(installment?.createdAt))}
-                  </td>
-                  {user?.role === 'ADMIN' && (
-                    <td>
-                      <GearIcon size={20} />
-                    </td>
-                  )}
-                </tr>
+                <InstallmentCard
+                  {...installment}
+                  key={installment.id}
+                  isAdmin={user.role === 'ADMIN'}
+                />
               );
             })}
-          </tbody>
-        </InstallmentsTable>
+          </>
+        )}
       </InstallmentsContainer>
-    </div>
+    </>
   );
 }

@@ -6,7 +6,7 @@ interface InstallmentsProviderProps {
   children: ReactNode;
 }
 
-interface Installment {
+export interface Installment {
   id: number;
   description: string;
   type: 'INCOME' | 'OUTCOME';

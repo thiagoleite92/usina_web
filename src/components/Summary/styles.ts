@@ -10,6 +10,7 @@ export const SummaryContainer = styled.section`
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   margin-top: -6rem;
+  overflow-x: auto;
 `;
 
 interface SummaryCardProps {
