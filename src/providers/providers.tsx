@@ -1,6 +1,6 @@
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from '../styles/themes/default';
-import { TransactionsProvider } from '../contexts/TransactionsContext';
+import { InstallmentsProvider } from '../contexts/InstallmentContext';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '../hooks/useAuth';
 
@@ -12,9 +12,9 @@ export function Providers({ children }: ProvidersProps) {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <TransactionsProvider>
+        <InstallmentsProvider>
           <ThemeProvider theme={defaultTheme}>{children}</ThemeProvider>
-        </TransactionsProvider>
+        </InstallmentsProvider>
       </AuthProvider>
     </BrowserRouter>
   );

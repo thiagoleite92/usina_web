@@ -74,20 +74,20 @@ export const CloseButton = styled(Dialog.Close)`
   color: ${(props) => props.theme['gray-500']};
 `;
 
-export const TransactionType = styled(RadioGroup.Root)`
+export const InstallmentType = styled(RadioGroup.Root)`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1rem;
   margin-top: 0.5rem;
 `;
 
-interface TransactionTypeButtonProps {
-  variant: 'income' | 'outcome';
+interface InstallmentTypeButtonProps {
+  variant: 'INCOME' | 'OUTCOME';
 }
 
-export const TransactionTypeButton = styled(
+export const InstallmentTypeButton = styled(
   RadioGroup.Item
-)<TransactionTypeButtonProps>`
+)<InstallmentTypeButtonProps>`
   background: ${(props) => props.theme['gray-700']};
   padding: 1rem;
   display: flex;
@@ -101,7 +101,7 @@ export const TransactionTypeButton = styled(
 
   svg {
     color: ${(props) =>
-      props.variant === 'income'
+      props.variant === 'INCOME'
         ? props.theme['green-300']
         : props.theme['red-300']};
   }
@@ -114,7 +114,7 @@ export const TransactionTypeButton = styled(
   &[data-state='checked'] {
     color: ${(props) => props.theme['white']};
     background: ${(props) =>
-      props.variant === 'income'
+      props.variant === 'INCOME'
         ? props.theme['green-500']
         : props.theme['red-500']};
     border: none;

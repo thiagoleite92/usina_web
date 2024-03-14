@@ -1,14 +1,14 @@
-import { ReactNode, createContext } from 'react';
+import { ReactNode, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from './useLocalStorage';
 import { User } from '../types/UserType';
+import { createContext } from 'use-context-selector';
 
 interface AuthContexType {
   login: (userData: { token: string; user: User }) => void;
   logout: () => void;
   user: User;
   token: string;
-  redirect: (url: string) => void;
 }
 
 export const AuthContext = createContext({} as AuthContexType);
@@ -22,24 +22,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [token, setToken] = useLocalStorage('token', null);
   const navigate = useNavigate();
 
-  function login(userData: { token: string; user: User }) {
-    setUser(userData.user);
-    setToken(userData.token);
-    navigate('/home', { replace: true });
-  }
+  const login = useCallback(
+    (userData: { token: string; user: User }) => {
+      setUser(userData.user);
+      setToken(userData.token);
+      navigate('/home', { replace: true });
+    },
+    [navigate, setToken, setUser]
+  );
 
-  function logout() {
+  const logout = useCallback(() => {
     setUser(null);
     setToken(null);
     navigate('/auth/login', { replace: true });
-  }
-
-  function redirect(url: string) {
-    navigate(url);
-  }
+  }, [navigate, setToken, setUser]);
 
   return (
-    <AuthContext.Provider value={{ login, logout, user, token, redirect }}>
+    <AuthContext.Provider value={{ login, logout, user, token }}>
       {children}
     </AuthContext.Provider>
   );

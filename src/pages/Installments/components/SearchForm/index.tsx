@@ -3,8 +3,8 @@ import { z } from 'zod';
 import { MagnifyingGlass } from 'phosphor-react';
 import { SerachFormContainer } from './styles';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TransactionsContext } from '../../../../contexts/TransactionsContext';
 import { useContextSelector } from 'use-context-selector';
+import { InstallmentsContext } from '../../../../contexts/InstallmentContext';
 
 const searchFormSchema = z.object({
   query: z.string(),
@@ -30,9 +30,9 @@ type SearchForm = z.infer<typeof searchFormSchema>;
  */
 
 export function SearchForm() {
-  const fetchTransactions = useContextSelector(
-    TransactionsContext,
-    (context) => context.fetchTransactions
+  const fetchInstallment = useContextSelector(
+    InstallmentsContext,
+    (context) => context.fetchInstallments
   );
 
   const {
@@ -46,12 +46,12 @@ export function SearchForm() {
     },
   });
 
-  async function handleSearchTransactions(data: SearchForm) {
-    await fetchTransactions(data?.query);
+  async function handleSearchInstallments(data: SearchForm) {
+    await fetchInstallment(data?.query);
   }
 
   return (
-    <SerachFormContainer onSubmit={handleSubmit(handleSearchTransactions)}>
+    <SerachFormContainer onSubmit={handleSubmit(handleSearchInstallments)}>
       <input
         type="search"
         placeholder="Busque por Transações"

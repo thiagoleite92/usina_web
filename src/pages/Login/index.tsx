@@ -5,8 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { api } from '../../lib/axios';
 import { Auth } from '../../types/AuthType';
 import { AxiosAuthResponse } from '../../types/AxiosAuthResponse';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { AuthContext } from '../../hooks/useAuth';
+import { useContextSelector } from 'use-context-selector';
+import { useNavigate } from 'react-router-dom';
 
 const loginFormSchema = z.object({
   email: z.string().email(),
@@ -16,11 +18,16 @@ const loginFormSchema = z.object({
 type LoginFormType = z.infer<typeof loginFormSchema>;
 
 export function Login() {
-  const { login, user, redirect } = useContext(AuthContext);
+  const { login, user } = useContextSelector(AuthContext, (context) => ({
+    login: context.login,
+    user: context.user,
+  }));
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) return redirect('/home');
-  }, [redirect, user]);
+    if (user) return navigate('/home');
+  }, [navigate, user]);
 
   const {
     handleSubmit,
