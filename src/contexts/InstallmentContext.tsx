@@ -23,29 +23,56 @@ interface CreateInstallmentData {
   date: Date;
 }
 
+interface QueryParams {
+  search: string;
+  page: string;
+  perPage: string;
+}
+
 interface InstallmentContextType {
   installments: Installment[];
-  fetchInstallments: (query?: string) => Promise<void>;
+  fetchInstallments(query?: QueryParams): Promise<void>;
   createInstallment(data: CreateInstallmentData): Promise<void>;
+  handleQueryParams(queryParams: QueryParams): void;
 }
 
 export const InstallmentsContext = createContext({} as InstallmentContextType);
 
 export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
   const [installments, setInstallments] = useState<Installment[]>([]);
+  const [params, setParams] = useState({
+    search: '',
+    page: '1',
+    perPage: '10',
+  });
+
+  const { page, perPage, search } = params;
+
+  const handleQueryParams = (queryParams: QueryParams) => {
+    console.log(queryParams);
+    setParams((oldState) => ({
+      ...oldState,
+      ...queryParams,
+    }));
+  };
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const fetchInstallments = useCallback(async (_query?: string) => {
+  const fetchInstallments = useCallback(async () => {
     const {
       data: { installments },
     } = await api.get('/installment', {
       headers: {
         Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('token')!),
       },
+      params: {
+        search,
+        page,
+        perPage,
+      },
     });
 
     setInstallments(installments);
-  }, []);
+  }, [page, perPage, search]);
 
   const createInstallment = useCallback(async (data: CreateInstallmentData) => {
     const { installment, description, value, type, date } = data;
@@ -77,7 +104,12 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
 
   return (
     <InstallmentsContext.Provider
-      value={{ installments, fetchInstallments, createInstallment }}
+      value={{
+        installments,
+        fetchInstallments,
+        createInstallment,
+        handleQueryParams,
+      }}
     >
       {children}
     </InstallmentsContext.Provider>

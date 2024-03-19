@@ -10,8 +10,9 @@ export function DateInput({ value, onChange }: ControllerRenderProps) {
       selected={value}
       onChange={onChange}
       placeholderText="Selecione a Data"
-      locale={ptBR}
+      locale="ptBR"
       isClearable
+      dateFormat="dd/MM/yyyy"
     />
   );
 }

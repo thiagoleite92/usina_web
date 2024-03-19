@@ -13,6 +13,8 @@ import { InstallmentsContext } from '../../contexts/InstallmentContext';
 import { AuthContext } from '../../hooks/useAuth';
 import { useWindowSize } from '../../hooks/useWindowSize';
 import { InstallmentCard } from './components/InstallmentCard';
+import { breakpoint } from '../../const/breakpoint';
+import { columnHeads } from '../../const/columnsHead';
 
 export function Installments() {
   const installments = useContextSelector(
@@ -32,6 +34,13 @@ export function Installments() {
         <SearchForm />
         <div style={{ overflowX: 'auto' }}>
           <InstallmentsTable>
+            <thead>
+              <tr>
+                {columnHeads.map((head) => (
+                  <th key={head}>{head}</th>
+                ))}
+              </tr>
+            </thead>
             {width && width >= 680 && (
               <tbody>
                 {installments?.map((installment) => {
@@ -60,7 +69,7 @@ export function Installments() {
             )}
           </InstallmentsTable>
         </div>
-        {width && width < 680 && (
+        {width && width < breakpoint && (
           <>
             {installments?.map((installment) => {
               return (

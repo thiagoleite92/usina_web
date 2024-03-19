@@ -14,7 +14,7 @@ export function Header() {
 
         <Dialog.Root>
           <Dialog.Trigger asChild>
-            <NewInstallmentButton>Adicionar Prestação</NewInstallmentButton>
+            <NewInstallmentButton>Adicionar</NewInstallmentButton>
           </Dialog.Trigger>
           <NewInstallmentModal />
         </Dialog.Root>

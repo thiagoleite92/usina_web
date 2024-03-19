@@ -40,7 +40,7 @@ export function NewInstallmentModal() {
     watch,
     setValue,
 
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
   } = useForm<NewInstallmentFormInputs>({
     resolver: zodResolver(newInstallmentFormSchema),
     defaultValues: {
@@ -50,8 +50,6 @@ export function NewInstallmentModal() {
       type: 'INCOME',
     },
   });
-
-  console.log(errors);
 
   async function handleNewInstallment(data: NewInstallmentFormInputs) {
     createNewInstallment(data);

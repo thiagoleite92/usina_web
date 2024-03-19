@@ -1,16 +1,21 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { MagnifyingGlass } from 'phosphor-react';
-import { SerachFormContainer } from './styles';
+import { MagnifyingGlass, X } from 'phosphor-react';
+import { SearchFormContainer } from './styles';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useContextSelector } from 'use-context-selector';
 import { InstallmentsContext } from '../../../../contexts/InstallmentContext';
+import { useWindowSize } from '../../../../hooks/useWindowSize';
+import { breakpoint } from '../../../../const/breakpoint';
+import { useState } from 'react';
 
-const searchFormSchema = z.object({
-  query: z.string(),
+const querySchema = z.object({
+  search: z.string().min(3, '3 letras'),
+  perPage: z.string().default('10'),
+  page: z.string().default('1'),
 });
 
-type SearchForm = z.infer<typeof searchFormSchema>;
+type SearchForm = z.infer<typeof querySchema>;
 
 /**
  * Por que um componente renderiza?
@@ -30,37 +35,58 @@ type SearchForm = z.infer<typeof searchFormSchema>;
  */
 
 export function SearchForm() {
-  const fetchInstallment = useContextSelector(
+  const [haveSearched, setHaveSearched] = useState(false);
+  const { width } = useWindowSize();
+
+  const handleQueryParams = useContextSelector(
     InstallmentsContext,
-    (context) => context.fetchInstallments
+    (context) => context.handleQueryParams
   );
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { isSubmitting },
   } = useForm<SearchForm>({
-    resolver: zodResolver(searchFormSchema),
+    resolver: zodResolver(querySchema),
     defaultValues: {
-      query: '',
+      search: '',
     },
   });
 
-  async function handleSearchInstallments(data: SearchForm) {
-    await fetchInstallment(data?.query);
+  function handleSearchInstallments({ search, perPage, page }: SearchForm) {
+    handleQueryParams({ search, page, perPage });
+    setHaveSearched(true);
+  }
+
+  function handleClearQuery() {
+    reset();
+    handleQueryParams({ search: '', page: '1', perPage: '10' });
+    setHaveSearched(false);
   }
 
   return (
-    <SerachFormContainer onSubmit={handleSubmit(handleSearchInstallments)}>
+    <SearchFormContainer onSubmit={handleSubmit(handleSearchInstallments)}>
       <input
-        type="search"
-        placeholder="Busque por Transações"
-        {...register('query')}
+        type="text"
+        placeholder={
+          width && width > breakpoint
+            ? `Digite 3 letras para buscar por Descrição ou Categoria.`
+            : 'Busque por Descrição ou Categoria'
+        }
+        {...register('search')}
       />
 
       <button type="submit" disabled={isSubmitting}>
-        <MagnifyingGlass size={20} /> Buscar
+        <MagnifyingGlass size={20} />
+        {width && width > breakpoint && 'Buscar'}
       </button>
-    </SerachFormContainer>
+      {haveSearched && (
+        <button onClick={handleClearQuery}>
+          <X size={20} /> {width && width > breakpoint && 'Limpar'}
+        </button>
+      )}
+    </SearchFormContainer>
   );
 }
