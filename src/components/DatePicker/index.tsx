@@ -4,15 +4,28 @@ registerLocale('ptBR', ptBR);
 import 'react-datepicker/dist/react-datepicker.css';
 import { ControllerRenderProps } from 'react-hook-form';
 
-export function DateInput({ value, onChange }: ControllerRenderProps) {
+type DateInputProps = ControllerRenderProps & {
+  dateFormat?: string;
+  placeholder?: string;
+  showMonthYearPicker: boolean;
+};
+
+export function DateInput({
+  onChange,
+  value,
+  dateFormat = 'dd/mmmm/yyyy',
+  showMonthYearPicker,
+  placeholder = 'Selecione Data',
+}: DateInputProps) {
   return (
     <DatePicker
       selected={value}
       onChange={onChange}
-      placeholderText="Selecione a Data"
+      placeholderText={placeholder}
       locale="ptBR"
       isClearable
-      dateFormat="dd/MM/yyyy"
+      showMonthYearPicker={showMonthYearPicker}
+      dateFormat={dateFormat}
     />
   );
 }

@@ -15,10 +15,15 @@ export interface Installment {
   createdAt: string;
 }
 
+interface InstallmentCategory {
+  id: string;
+  installmentCategory: string;
+}
+
 interface CreateInstallmentData {
-  description: string;
+  description?: string;
   value: string;
-  installment: string;
+  installmentCategoryId: string;
   type: 'INCOME' | 'OUTCOME';
   date: Date;
 }
@@ -31,6 +36,7 @@ interface QueryParams {
 
 interface InstallmentContextType {
   installments: Installment[];
+  installmentCategories: InstallmentCategory[];
   fetchInstallments(query?: QueryParams): Promise<void>;
   createInstallment(data: CreateInstallmentData): Promise<void>;
   handleQueryParams(queryParams: QueryParams): void;
@@ -40,6 +46,9 @@ export const InstallmentsContext = createContext({} as InstallmentContextType);
 
 export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
   const [installments, setInstallments] = useState<Installment[]>([]);
+  const [installmentCategories, setInstallmentCategories] = useState<
+    InstallmentCategory[]
+  >([]);
   const [params, setParams] = useState({
     search: '',
     page: '1',
@@ -49,39 +58,59 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
   const { page, perPage, search } = params;
 
   const handleQueryParams = (queryParams: QueryParams) => {
-    console.log(queryParams);
     setParams((oldState) => ({
       ...oldState,
       ...queryParams,
     }));
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const fetchInstallments = useCallback(async () => {
-    const {
-      data: { installments },
-    } = await api.get('/installment', {
-      headers: {
-        Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('token')!),
-      },
-      params: {
-        search,
-        page,
-        perPage,
-      },
-    });
+    try {
+      const {
+        data: { installments },
+      } = await api.get('/installment', {
+        headers: {
+          Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('token')!),
+        },
+        params: {
+          search,
+          page,
+          perPage,
+        },
+      });
 
-    setInstallments(installments);
+      setInstallments(installments);
+    } catch (error) {
+      console.log(error);
+    }
   }, [page, perPage, search]);
 
+  const fetchInstallmentCategories = useCallback(async () => {
+    try {
+      const { data: installmentCategories } = await api.get(
+        '/installment/categories',
+        {
+          headers: {
+            Authorization:
+              'Bearer ' + JSON.parse(localStorage.getItem('token')!),
+          },
+        }
+      );
+
+      setInstallmentCategories(installmentCategories.installmentCategories);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
   const createInstallment = useCallback(async (data: CreateInstallmentData) => {
-    const { installment, description, value, type, date } = data;
+    const { installmentCategoryId, description, value, type, date } = data;
 
     const response = await api.post(
       '/installment',
       {
         description,
-        installment,
+        installmentCategoryId,
         value: Number(value.replace(/\D/g, '')),
         type: type.toLocaleUpperCase(),
         date,
@@ -100,12 +129,14 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
 
   useEffect(() => {
     fetchInstallments();
-  }, [fetchInstallments]);
+    fetchInstallmentCategories();
+  }, [fetchInstallmentCategories, fetchInstallments]);
 
   return (
     <InstallmentsContext.Provider
       value={{
         installments,
+        installmentCategories,
         fetchInstallments,
         createInstallment,
         handleQueryParams,

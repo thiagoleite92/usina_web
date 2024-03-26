@@ -15,11 +15,12 @@ import { InstallmentsContext } from '../../contexts/InstallmentContext';
 import { DateInput } from '../DatePicker';
 import { useEffect } from 'react';
 import { formatCurrency } from '../../utils/formatter';
+import { SelectInput } from '../Select';
 
 const newInstallmentFormSchema = z.object({
-  description: z.string().min(1).max(50),
+  description: z.optional(z.string()),
   value: z.string(),
-  installment: z.string().min(3).max(50),
+  installmentCategoryId: z.string(),
   date: z.date(),
   type: z.enum(['INCOME', 'OUTCOME']),
 });
@@ -30,6 +31,18 @@ export function NewInstallmentModal() {
   const createNewInstallment = useContextSelector(
     InstallmentsContext,
     (context) => context.createInstallment
+  );
+
+  const installmentCategories = useContextSelector(
+    InstallmentsContext,
+    (context) => {
+      context.installmentCategories;
+
+      return context.installmentCategories.map((category) => ({
+        label: category.installmentCategory,
+        value: category.id,
+      }));
+    }
   );
 
   const {
@@ -44,7 +57,7 @@ export function NewInstallmentModal() {
   } = useForm<NewInstallmentFormInputs>({
     resolver: zodResolver(newInstallmentFormSchema),
     defaultValues: {
-      installment: '',
+      installmentCategoryId: '',
       value: '',
       description: '',
       type: 'INCOME',
@@ -53,8 +66,6 @@ export function NewInstallmentModal() {
 
   async function handleNewInstallment(data: NewInstallmentFormInputs) {
     createNewInstallment(data);
-
-    reset();
   }
 
   const valueWatch = watch('value');
@@ -67,31 +78,13 @@ export function NewInstallmentModal() {
     <Dialog.Portal>
       <Overlay />
       <Content>
-        <Dialog.Title>Nova Prestação</Dialog.Title>
+        <Dialog.Title>Adicionar</Dialog.Title>
 
         <CloseButton onClick={() => reset()}>
           <X size={24} />
         </CloseButton>
 
         <form onSubmit={handleSubmit(handleNewInstallment)}>
-          <input
-            type="text"
-            placeholder="Descrição"
-            {...register('description')}
-          />
-          <input type="text" placeholder="Valor" {...register('value')} />
-          <input
-            type="text"
-            placeholder="Categoria"
-            {...register('installment')}
-          />
-
-          <Controller
-            control={control}
-            name="date"
-            render={({ field }) => <DateInput {...field} />}
-          />
-
           <Controller
             control={control}
             name="type"
@@ -101,17 +94,51 @@ export function NewInstallmentModal() {
                 value={field.value}
               >
                 <InstallmentTypeButton variant="INCOME" value="INCOME">
-                  Entrada <ArrowCircleUp size={24} />
+                  Receita <ArrowCircleUp size={24} />
                 </InstallmentTypeButton>
                 <InstallmentTypeButton variant="OUTCOME" value="OUTCOME">
-                  Saída <ArrowCircleDown size={24} />
+                  Despesa <ArrowCircleDown size={24} />
                 </InstallmentTypeButton>
               </InstallmentType>
             )}
           />
 
+          <Controller
+            control={control}
+            name="installmentCategoryId"
+            render={({ field }) => (
+              <SelectInput
+                options={installmentCategories}
+                placeholder="Selecione ou Insira Nova Categoria"
+                createNewIOptionLabel="Criar Categoria"
+                {...field}
+              />
+            )}
+          />
+
+          <input type="text" placeholder="Valor" {...register('value')} />
+
+          <input
+            type="text"
+            placeholder="Descrição (opcional)"
+            {...register('description')}
+          />
+
+          <Controller
+            control={control}
+            name="date"
+            render={({ field }) => (
+              <DateInput
+                showMonthYearPicker
+                dateFormat="MMMM yyyy"
+                placeholder="Selecione Mês e Ano"
+                {...field}
+              />
+            )}
+          />
+
           <button type="submit" disabled={isSubmitting}>
-            Salvar
+            Adicionar
           </button>
         </form>
       </Content>
