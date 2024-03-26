@@ -8,19 +8,20 @@ interface InstallmentCardProps {
   description: string;
   type: 'INCOME' | 'OUTCOME';
   value: number;
-  installment: string;
+  installmentCategoryId: string;
   createdAt: string;
   isAdmin: boolean;
+  date: string;
 }
 
 export function InstallmentCard({
-  createdAt,
   description,
   id,
-  installment,
+  installmentCategoryId,
   type,
   value,
   isAdmin,
+  date,
 }: InstallmentCardProps) {
   return (
     <InstallmentCardContainer>
@@ -43,8 +44,13 @@ export function InstallmentCard({
       </PriceHighLight>
 
       <div className="installment-info">
-        <span>{installment}</span>
-        <span>{dateFormatter.format(new Date(createdAt))}</span>
+        <span>{installmentCategoryId}</span>
+        <span>
+          {dateFormatter({
+            month: 'short',
+            year: 'numeric',
+          }).format(new Date(date))}
+        </span>
       </div>
     </InstallmentCardContainer>
   );

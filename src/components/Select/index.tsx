@@ -26,7 +26,6 @@ export function SelectInput({
       formatCreateLabel={(value) => `${createNewIOptionLabel}: ${value}`}
       className="react-select-container"
       classNamePrefix="react-select"
-      inputId="react-select-input"
     />
   );
 }

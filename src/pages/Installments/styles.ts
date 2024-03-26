@@ -1,4 +1,4 @@
-import { Gear } from 'phosphor-react';
+import { Pencil, Trash } from 'phosphor-react';
 import styled from 'styled-components';
 
 export const InstallmentsContainer = styled.main`
@@ -8,26 +8,37 @@ export const InstallmentsContainer = styled.main`
   padding: 0 1.5rem;
 `;
 
-export const InstallmentsTable = styled.table`
+export const Installments = styled.div`
   width: 100%;
   border-collapse: separate;
   border-spacing: 0 0.4rem;
   margin-top: 0.5rem;
 
-  td {
-    text-align: left;
-    padding: 1.25rem 2rem;
-    background: ${(props) => props.theme['gray-700']};
+  ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    li {
+      display: flex;
+      div {
+        width: 100%;
+        background-color: red;
+        text-align: left;
+        padding: 1.25rem 2rem;
+        background: ${(props) => props.theme['gray-700']};
 
-    &:first-child {
-      border-top-left-radius: 6px;
-      border-bottom-left-radius: 6px;
-    }
+        &:first-child {
+          border-top-left-radius: 6px;
+          border-bottom-left-radius: 6px;
+        }
 
-    &:last-child {
-      border-top-right-radius: 6px;
-      border-bottom-right-radius: 6px;
-      text-align: center;
+        &:last-child {
+          border-top-right-radius: 6px;
+          border-bottom-right-radius: 6px;
+          text-align: center;
+        }
+      }
     }
   }
 
@@ -49,6 +60,14 @@ export const PriceHighLight = styled.span<PriceHighLightProps>`
       : props.theme['red-300']};
 `;
 
-export const GearIcon = styled(Gear)`
+export const PencilIcon = styled(Pencil)`
+  color: ${(props) => props.theme['green-300']};
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+export const TrashIcon = styled(Trash)`
+  color: ${(props) => props.theme['red-300']};
   cursor: pointer;
 `;

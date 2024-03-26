@@ -11,7 +11,8 @@ export interface Installment {
   description: string;
   type: 'INCOME' | 'OUTCOME';
   value: number;
-  installment: string;
+  installmentCategoryId: string;
+  date: string;
   createdAt: string;
 }
 

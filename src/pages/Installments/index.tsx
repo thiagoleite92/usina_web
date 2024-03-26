@@ -4,8 +4,9 @@ import { SearchForm } from './components/SearchForm';
 import {
   PriceHighLight,
   InstallmentsContainer,
-  InstallmentsTable,
-  GearIcon,
+  Installments,
+  PencilIcon,
+  TrashIcon,
 } from './styles';
 import { dateFormatter, priceFormatter } from '../../utils/formatter';
 import { useContextSelector } from 'use-context-selector';
@@ -14,13 +15,17 @@ import { AuthContext } from '../../hooks/useAuth';
 import { useWindowSize } from '../../hooks/useWindowSize';
 import { InstallmentCard } from './components/InstallmentCard';
 import { breakpoint } from '../../const/breakpoint';
-import { columnHeads } from '../../const/columnsHead';
 
-export function Installments() {
-  const installments = useContextSelector(
+export function InstallmentsPage() {
+  const { installments, installmentCategories } = useContextSelector(
     InstallmentsContext,
-    (context) => context?.installments
+    (context) => ({
+      installments: context?.installments,
+      installmentCategories: context?.installmentCategories,
+    })
   );
+
+  console.log(installmentCategories);
 
   const user = useContextSelector(AuthContext, (context) => context?.user);
 
@@ -33,41 +38,54 @@ export function Installments() {
       <InstallmentsContainer>
         <SearchForm />
         <div style={{ overflowX: 'auto' }}>
-          <InstallmentsTable>
-            <thead>
-              <tr>
-                {columnHeads.map((head) => (
-                  <th key={head}>{head}</th>
-                ))}
-              </tr>
-            </thead>
+          <Installments>
             {width && width >= 680 && (
-              <tbody>
-                {installments?.map((installment) => {
-                  return (
-                    <tr key={installment?.id}>
-                      <td width="50%">{installment?.description}</td>
-                      <td>
-                        <PriceHighLight variant={installment?.type}>
-                          {installment?.type === 'OUTCOME' && '-'}
-                          {priceFormatter.format(installment?.value / 100)}
-                        </PriceHighLight>
-                      </td>
-                      <td>{installment?.installment}</td>
-                      <td>
-                        {dateFormatter.format(new Date(installment?.createdAt))}
-                      </td>
-                      {user?.role === 'ADMIN' && (
-                        <td>
-                          <GearIcon size={20} />
-                        </td>
-                      )}
-                    </tr>
-                  );
-                })}
-              </tbody>
+              <>
+                <ul>
+                  {installments?.map((installment) => {
+                    return (
+                      <li key={installment?.id}>
+                        <div>
+                          {
+                            installmentCategories.find(
+                              (category) =>
+                                category.id ===
+                                installment?.installmentCategoryId
+                            )?.installmentCategory
+                          }
+                        </div>
+                        <div>
+                          <PriceHighLight variant={installment?.type}>
+                            {installment?.type === 'OUTCOME' && '-'}
+                            {priceFormatter.format(installment?.value / 100)}
+                          </PriceHighLight>
+                        </div>
+                        <div>{installment?.description}</div>
+                        <div>
+                          {dateFormatter({
+                            month: 'short',
+                            year: 'numeric',
+                          }).format(new Date(installment?.date))}
+                        </div>
+                        {user?.role === 'ADMIN' && (
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-around',
+                              gap: '8px',
+                            }}
+                          >
+                            <PencilIcon size={20} />
+                            <TrashIcon size={20} />
+                          </div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </>
             )}
-          </InstallmentsTable>
+          </Installments>
         </div>
         {width && width < breakpoint && (
           <>

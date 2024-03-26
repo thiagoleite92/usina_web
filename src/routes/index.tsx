@@ -1,6 +1,6 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 import { Login } from '../pages/Login';
-import { Installments } from '../pages/Installments';
+import { InstallmentsPage } from '../pages/Installments';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 export function Routes() {
@@ -13,7 +13,7 @@ export function Routes() {
       path: '/home',
       element: (
         <ProtectedRoute>
-          <Installments />
+          <InstallmentsPage />
         </ProtectedRoute>
       ),
     },
