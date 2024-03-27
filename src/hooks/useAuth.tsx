@@ -7,6 +7,7 @@ import { createContext } from 'use-context-selector';
 interface AuthContexType {
   login: (userData: { token: string; user: User }) => void;
   logout: () => void;
+  handleSaveToken: (token: string) => void;
   user: User;
   token: string;
 }
@@ -37,8 +38,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     navigate('/auth/login', { replace: true });
   }, [navigate, setToken, setUser]);
 
+  const handleSaveToken = (token: string) => {
+    setToken(token);
+  };
+
   return (
-    <AuthContext.Provider value={{ login, logout, user, token }}>
+    <AuthContext.Provider
+      value={{ login, logout, user, token, handleSaveToken }}
+    >
       {children}
     </AuthContext.Provider>
   );

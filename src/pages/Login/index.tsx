@@ -18,10 +18,14 @@ const loginFormSchema = z.object({
 type LoginFormType = z.infer<typeof loginFormSchema>;
 
 export function Login() {
-  const { login, user } = useContextSelector(AuthContext, (context) => ({
-    login: context.login,
-    user: context.user,
-  }));
+  const { login, user, handleSaveToken } = useContextSelector(
+    AuthContext,
+    (context) => ({
+      login: context.login,
+      user: context.user,
+      handleSaveToken: context.handleSaveToken,
+    })
+  );
 
   const navigate = useNavigate();
 
@@ -42,6 +46,7 @@ export function Login() {
 
     try {
       const { data } = (await api.post('/auth', { email, password })) as Auth;
+      handleSaveToken(data?.access_token);
 
       if (data?.access_token) {
         const response = (await api.get('/user/me', {

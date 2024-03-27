@@ -8,44 +8,33 @@ export const InstallmentsContainer = styled.main`
   padding: 0 1.5rem;
 `;
 
-export const Installments = styled.div`
+export const InstallmentsTable = styled.table`
   width: 100%;
   border-collapse: separate;
   border-spacing: 0 0.4rem;
   margin-top: 0.5rem;
 
-  ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    li {
-      display: flex;
-      div {
-        width: 100%;
-        background-color: red;
-        text-align: left;
-        padding: 1.25rem 2rem;
-        background: ${(props) => props.theme['gray-700']};
-
-        &:first-child {
-          border-top-left-radius: 6px;
-          border-bottom-left-radius: 6px;
-        }
-
-        &:last-child {
-          border-top-right-radius: 6px;
-          border-bottom-right-radius: 6px;
-          text-align: center;
-        }
-      }
-    }
-  }
-
   th {
     text-align: left;
     padding: 1.25rem 2rem;
     background: ${(props) => props.theme['gray-700']};
+  }
+
+  td {
+    text-align: left;
+    padding: 1.25rem 2rem;
+    background: ${(props) => props.theme['gray-700']};
+
+    &:first-child {
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+    }
+
+    &:last-child {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+      text-align: center;
+    }
   }
 `;
 
@@ -63,11 +52,11 @@ export const PriceHighLight = styled.span<PriceHighLightProps>`
 export const PencilIcon = styled(Pencil)`
   color: ${(props) => props.theme['green-300']};
   &:hover {
-    cursor: pointer;
+    cursor: 'pointer';
   }
 `;
 
 export const TrashIcon = styled(Trash)`
   color: ${(props) => props.theme['red-300']};
-  cursor: pointer;
+  cursor: 'pointer';
 `;

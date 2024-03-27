@@ -1,6 +1,8 @@
 import { ReactNode, useEffect, useState, useCallback } from 'react';
 import { api } from '../lib/axios';
-import { createContext } from 'use-context-selector';
+import { createContext, useContextSelector } from 'use-context-selector';
+import dayjs from 'dayjs';
+import { AuthContext } from '../hooks/useAuth';
 
 interface InstallmentsProviderProps {
   children: ReactNode;
@@ -30,14 +32,15 @@ interface CreateInstallmentData {
 }
 
 interface QueryParams {
-  search: string;
   page: string;
   perPage: string;
+  period: string[];
 }
 
 interface InstallmentContextType {
   installments: Installment[];
   installmentCategories: InstallmentCategory[];
+  periodsAvailable: { date: string }[];
   fetchInstallments(query?: QueryParams): Promise<void>;
   createInstallment(data: CreateInstallmentData): Promise<void>;
   handleQueryParams(queryParams: QueryParams): void;
@@ -46,17 +49,27 @@ interface InstallmentContextType {
 export const InstallmentsContext = createContext({} as InstallmentContextType);
 
 export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
+  const user = useContextSelector(AuthContext, (context) => {
+    return context.user;
+  });
+
   const [installments, setInstallments] = useState<Installment[]>([]);
   const [installmentCategories, setInstallmentCategories] = useState<
     InstallmentCategory[]
   >([]);
   const [params, setParams] = useState({
-    search: '',
     page: '1',
     perPage: '10',
+    period: [
+      dayjs().startOf('month').format('YYYY-MM-DD'),
+      dayjs().endOf('month').format('YYYY-MM-DD'),
+    ],
   });
+  const [periodsAvailable, setPeriodsAvailable] = useState<{ date: string }[]>(
+    []
+  );
 
-  const { page, perPage, search } = params;
+  const { page, perPage, period } = params;
 
   const handleQueryParams = (queryParams: QueryParams) => {
     setParams((oldState) => ({
@@ -70,13 +83,10 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
       const {
         data: { installments },
       } = await api.get('/installment', {
-        headers: {
-          Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('token')!),
-        },
         params: {
-          search,
           page,
           perPage,
+          monthFilter: period,
         },
       });
 
@@ -84,7 +94,7 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
     } catch (error) {
       console.log(error);
     }
-  }, [page, perPage, search]);
+  }, [page, perPage, period]);
 
   const fetchInstallmentCategories = useCallback(async () => {
     try {
@@ -128,10 +138,29 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
     setInstallments((oldState: Installment[]) => [newInstallment, ...oldState]);
   }, []);
 
+  const fetchInstallmentsPeriodsAvailable = useCallback(async () => {
+    const response = await api.get(
+      '/installment/periods-available',
+
+      {
+        headers: {
+          Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('token')!),
+        },
+      }
+    );
+
+    setPeriodsAvailable(response?.data?.availablePeriods);
+  }, []);
+
   useEffect(() => {
+    if (!user) return;
     fetchInstallments();
+  }, [fetchInstallments, user]);
+
+  useEffect(() => {
     fetchInstallmentCategories();
-  }, [fetchInstallmentCategories, fetchInstallments]);
+    fetchInstallmentsPeriodsAvailable();
+  }, [fetchInstallmentCategories, fetchInstallmentsPeriodsAvailable, user]);
 
   return (
     <InstallmentsContext.Provider
@@ -141,6 +170,7 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
         fetchInstallments,
         createInstallment,
         handleQueryParams,
+        periodsAvailable,
       }}
     >
       {children}

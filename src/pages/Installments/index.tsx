@@ -4,9 +4,9 @@ import { SearchForm } from './components/SearchForm';
 import {
   PriceHighLight,
   InstallmentsContainer,
-  Installments,
   PencilIcon,
   TrashIcon,
+  InstallmentsTable,
 } from './styles';
 import { dateFormatter, priceFormatter } from '../../utils/formatter';
 import { useContextSelector } from 'use-context-selector';
@@ -15,6 +15,7 @@ import { AuthContext } from '../../hooks/useAuth';
 import { useWindowSize } from '../../hooks/useWindowSize';
 import { InstallmentCard } from './components/InstallmentCard';
 import { breakpoint } from '../../const/breakpoint';
+import { columnHeads } from '../../const/columnsHead';
 
 export function InstallmentsPage() {
   const { installments, installmentCategories } = useContextSelector(
@@ -24,8 +25,6 @@ export function InstallmentsPage() {
       installmentCategories: context?.installmentCategories,
     })
   );
-
-  console.log(installmentCategories);
 
   const user = useContextSelector(AuthContext, (context) => context?.user);
 
@@ -38,14 +37,21 @@ export function InstallmentsPage() {
       <InstallmentsContainer>
         <SearchForm />
         <div style={{ overflowX: 'auto' }}>
-          <Installments>
+          <InstallmentsTable>
             {width && width >= 680 && (
               <>
-                <ul>
+                <thead>
+                  <tr>
+                    {columnHeads.map((head) => (
+                      <th key={head}>{head}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
                   {installments?.map((installment) => {
                     return (
-                      <li key={installment?.id}>
-                        <div>
+                      <tr key={installment?.id}>
+                        <td>
                           {
                             installmentCategories.find(
                               (category) =>
@@ -53,22 +59,22 @@ export function InstallmentsPage() {
                                 installment?.installmentCategoryId
                             )?.installmentCategory
                           }
-                        </div>
-                        <div>
+                        </td>
+                        <td>
                           <PriceHighLight variant={installment?.type}>
                             {installment?.type === 'OUTCOME' && '-'}
                             {priceFormatter.format(installment?.value / 100)}
                           </PriceHighLight>
-                        </div>
-                        <div>{installment?.description}</div>
-                        <div>
+                        </td>
+                        <td>{installment?.description}</td>
+                        <td>
                           {dateFormatter({
                             month: 'short',
                             year: 'numeric',
                           }).format(new Date(installment?.date))}
-                        </div>
+                        </td>
                         {user?.role === 'ADMIN' && (
-                          <div
+                          <td
                             style={{
                               display: 'flex',
                               justifyContent: 'space-around',
@@ -77,15 +83,15 @@ export function InstallmentsPage() {
                           >
                             <PencilIcon size={20} />
                             <TrashIcon size={20} />
-                          </div>
+                          </td>
                         )}
-                      </li>
+                      </tr>
                     );
                   })}
-                </ul>
+                </tbody>
               </>
             )}
-          </Installments>
+          </InstallmentsTable>
         </div>
         {width && width < breakpoint && (
           <>

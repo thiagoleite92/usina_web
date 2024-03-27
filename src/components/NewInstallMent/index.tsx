@@ -15,7 +15,7 @@ import { InstallmentsContext } from '../../contexts/InstallmentContext';
 import { DateInput } from '../DatePicker';
 import { useEffect } from 'react';
 import { formatCurrency } from '../../utils/formatter';
-import { SelectInput } from '../Select';
+import { SelectCreatable } from '../Select';
 
 const newInstallmentFormSchema = z.object({
   description: z.optional(z.string()),
@@ -87,7 +87,7 @@ export function NewInstallmentModal() {
         <form onSubmit={handleSubmit(handleNewInstallment)}>
           <Controller
             control={control}
-            name="type"
+            {...register('type')}
             render={({ field }) => (
               <InstallmentType
                 onValueChange={field.onChange}
@@ -107,7 +107,7 @@ export function NewInstallmentModal() {
             control={control}
             name="installmentCategoryId"
             render={({ field }) => (
-              <SelectInput
+              <SelectCreatable
                 options={installmentCategories}
                 placeholder="Selecione ou Insira Nova Categoria"
                 createNewIOptionLabel="Criar Categoria"

@@ -1,6 +1,6 @@
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { MagnifyingGlass, X } from 'phosphor-react';
+import { FunnelSimple, X } from 'phosphor-react';
 import { SearchFormContainer } from './styles';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useContextSelector } from 'use-context-selector';
@@ -8,31 +8,17 @@ import { InstallmentsContext } from '../../../../contexts/InstallmentContext';
 import { useWindowSize } from '../../../../hooks/useWindowSize';
 import { breakpoint } from '../../../../const/breakpoint';
 import { useState } from 'react';
+import dayjs from 'dayjs';
+import { SelectInput } from '../../../../components/Select';
+import { useSelectAvailablePeriods } from '../../../../hooks/useParseMonthAndYear';
 
 const querySchema = z.object({
-  search: z.string().min(3, '3 letras'),
   perPage: z.string().default('10'),
   page: z.string().default('1'),
+  period: z.array(z.string()),
 });
 
 type SearchForm = z.infer<typeof querySchema>;
-
-/**
- * Por que um componente renderiza?
- * - Hooks changed (mudou estado, contexto, reducer);
- * - Props changed (mudou pripriedades);
- * - Parent rerendered (component pai renderizou);
- *
- * Qual o fluxo de renderização?
- * 1. O react recria o HTML da interface daquele componente
- * 2. Compara a versão do HTML recriada com a versão anterior
- * 3 SE mudou alguma coisa, ele reescreve o HTMl na tela
- *
- * Memo:
- * 0. Hooks changed, Props Changed (deep comparison)
- * 0.1 Comparar a versão anetrior dos hooks e props
- * 0.2 SE mudou algo, ele vai permitir o fluxo inicial
- */
 
 export function SearchForm() {
   const [haveSearched, setHaveSearched] = useState(false);
@@ -43,44 +29,58 @@ export function SearchForm() {
     (context) => context.handleQueryParams
   );
 
+  const selectOptions = useSelectAvailablePeriods();
+
   const {
-    register,
     handleSubmit,
     reset,
+    control,
     formState: { isSubmitting },
   } = useForm<SearchForm>({
     resolver: zodResolver(querySchema),
     defaultValues: {
-      search: '',
+      period: [
+        dayjs().startOf('month').format('YYYY-MM-DD'),
+        dayjs().endOf('month').format('YYYY-MM-DD'),
+      ],
     },
   });
 
-  function handleSearchInstallments({ search, perPage, page }: SearchForm) {
-    handleQueryParams({ search, page, perPage });
+  function handleFilter({ perPage, page, period }: SearchForm) {
+    handleQueryParams({ page, perPage, period });
     setHaveSearched(true);
   }
 
   function handleClearQuery() {
     reset();
-    handleQueryParams({ search: '', page: '1', perPage: '10' });
+    handleQueryParams({
+      page: '1',
+      perPage: '10',
+      period: [
+        dayjs().startOf('month').format('YYYY-MM-DD'),
+        dayjs().endOf('month').format('YYYY-MM-DD'),
+      ],
+    });
     setHaveSearched(false);
   }
 
   return (
-    <SearchFormContainer onSubmit={handleSubmit(handleSearchInstallments)}>
-      <input
-        type="text"
-        placeholder={
-          width && width > breakpoint
-            ? `Digite 3 letras para buscar por Descrição ou Categoria.`
-            : 'Busque por Descrição ou Categoria'
-        }
-        {...register('search')}
+    <SearchFormContainer onSubmit={handleSubmit(handleFilter)}>
+      <Controller
+        control={control}
+        name="period"
+        render={({ field }) => (
+          <SelectInput
+            options={selectOptions}
+            placeholder="Selecionar Período"
+            {...field}
+          />
+        )}
       />
 
       <button type="submit" disabled={isSubmitting}>
-        <MagnifyingGlass size={20} />
-        {width && width > breakpoint && 'Buscar'}
+        <FunnelSimple size={20} />
+        {width && width > breakpoint && 'Filtrar'}
       </button>
       {haveSearched && (
         <button onClick={handleClearQuery}>

@@ -1,7 +1,7 @@
 export const columnHeads: string[] = [
-  'Descrição',
-  'Valor',
   'Categoria',
-  'Data',
+  'Valor',
+  'Observações',
+  'Mês/Ano',
   'Opções',
 ];
