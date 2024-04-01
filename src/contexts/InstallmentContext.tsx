@@ -1,8 +1,9 @@
 import { ReactNode, useEffect, useState, useCallback } from 'react';
 import { api } from '../lib/axios';
 import { createContext, useContextSelector } from 'use-context-selector';
-import dayjs from 'dayjs';
 import { AuthContext } from '../hooks/useAuth';
+import { useInitialPeriod } from '../hooks/useInitialPeriod';
+import { parseSelectAvailabePeriods } from '../utils/parseSelectAvailablePeriods';
 
 interface InstallmentsProviderProps {
   children: ReactNode;
@@ -40,7 +41,7 @@ interface QueryParams {
 interface InstallmentContextType {
   installments: Installment[];
   installmentCategories: InstallmentCategory[];
-  periodsAvailable: { date: string }[];
+  periodsAvailable: { label: string; value: string[] }[];
   fetchInstallments(query?: QueryParams): Promise<void>;
   createInstallment(data: CreateInstallmentData): Promise<void>;
   handleQueryParams(queryParams: QueryParams): void;
@@ -53,6 +54,8 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
     return context.user;
   });
 
+  const initialPeriod = useInitialPeriod();
+
   const [installments, setInstallments] = useState<Installment[]>([]);
   const [installmentCategories, setInstallmentCategories] = useState<
     InstallmentCategory[]
@@ -60,14 +63,11 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
   const [params, setParams] = useState({
     page: '1',
     perPage: '10',
-    period: [
-      dayjs().startOf('month').format('YYYY-MM-DD'),
-      dayjs().endOf('month').format('YYYY-MM-DD'),
-    ],
+    period: initialPeriod,
   });
-  const [periodsAvailable, setPeriodsAvailable] = useState<{ date: string }[]>(
-    []
-  );
+  const [periodsAvailable, setPeriodsAvailable] = useState<
+    { label: string; value: string[] }[]
+  >([]);
 
   const { page, perPage, period } = params;
 
@@ -149,7 +149,9 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
       }
     );
 
-    setPeriodsAvailable(response?.data?.availablePeriods);
+    const teste = parseSelectAvailabePeriods(response?.data?.availablePeriods);
+
+    setPeriodsAvailable(teste);
   }, []);
 
   useEffect(() => {

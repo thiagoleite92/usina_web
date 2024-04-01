@@ -1,20 +1,15 @@
-import { useContextSelector } from 'use-context-selector';
-import { InstallmentsContext } from '../contexts/InstallmentContext';
 import dayjs from 'dayjs';
 
 import 'dayjs/locale/pt-br';
 
 dayjs.locale('pt-br');
 
-export const useSelectAvailablePeriods = (): {
+export const parseSelectAvailabePeriods = (
+  periodsAvailable: any[]
+): {
   label: string;
   value: string[];
 }[] => {
-  const periodsAvailable = useContextSelector(
-    InstallmentsContext,
-    (context) => context.periodsAvailable
-  );
-
   const parseMonthAndYear: { label: string; value: string[] }[] =
     periodsAvailable.reduce(
       (acc: { label: string; value: string[] }[], cur) => {

@@ -1,6 +1,6 @@
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { FunnelSimple, X } from 'phosphor-react';
+import { MagnifyingGlass, X } from 'phosphor-react';
 import { SearchFormContainer } from './styles';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useContextSelector } from 'use-context-selector';
@@ -8,9 +8,8 @@ import { InstallmentsContext } from '../../../../contexts/InstallmentContext';
 import { useWindowSize } from '../../../../hooks/useWindowSize';
 import { breakpoint } from '../../../../const/breakpoint';
 import { useState } from 'react';
-import dayjs from 'dayjs';
 import { SelectInput } from '../../../../components/Select';
-import { useSelectAvailablePeriods } from '../../../../hooks/useParseMonthAndYear';
+import { useInitialPeriod } from '../../../../hooks/useInitialPeriod';
 
 const querySchema = z.object({
   perPage: z.string().default('10'),
@@ -21,32 +20,32 @@ const querySchema = z.object({
 type SearchForm = z.infer<typeof querySchema>;
 
 export function SearchForm() {
+  const initialPeriod = useInitialPeriod();
   const [haveSearched, setHaveSearched] = useState(false);
   const { width } = useWindowSize();
 
-  const handleQueryParams = useContextSelector(
+  const { handleQueryParams, periodsAvailable } = useContextSelector(
     InstallmentsContext,
-    (context) => context.handleQueryParams
+    (context) => ({
+      handleQueryParams: context.handleQueryParams,
+      periodsAvailable: context.periodsAvailable,
+    })
   );
-
-  const selectOptions = useSelectAvailablePeriods();
 
   const {
     handleSubmit,
     reset,
     control,
     formState: { isSubmitting },
+    watch,
   } = useForm<SearchForm>({
     resolver: zodResolver(querySchema),
     defaultValues: {
-      period: [
-        dayjs().startOf('month').format('YYYY-MM-DD'),
-        dayjs().endOf('month').format('YYYY-MM-DD'),
-      ],
+      period: initialPeriod,
     },
   });
 
-  function handleFilter({ perPage, page, period }: SearchForm) {
+  function handleSearch({ perPage, page, period }: SearchForm) {
     handleQueryParams({ page, perPage, period });
     setHaveSearched(true);
   }
@@ -56,32 +55,34 @@ export function SearchForm() {
     handleQueryParams({
       page: '1',
       perPage: '10',
-      period: [
-        dayjs().startOf('month').format('YYYY-MM-DD'),
-        dayjs().endOf('month').format('YYYY-MM-DD'),
-      ],
+      period: initialPeriod,
     });
     setHaveSearched(false);
   }
 
+  const periodWatch = watch('period');
+
   return (
-    <SearchFormContainer onSubmit={handleSubmit(handleFilter)}>
+    <SearchFormContainer onSubmit={handleSubmit(handleSearch)}>
       <Controller
         control={control}
         name="period"
         render={({ field }) => (
           <SelectInput
-            options={selectOptions}
+            options={periodsAvailable}
             placeholder="Selecionar Período"
+            clear={haveSearched}
             {...field}
           />
         )}
       />
 
-      <button type="submit" disabled={isSubmitting}>
-        <FunnelSimple size={20} />
-        {width && width > breakpoint && 'Filtrar'}
-      </button>
+      {periodWatch[0]?.split('-')[1] !== initialPeriod[0]?.split('-')[1] && (
+        <button type="submit" disabled={isSubmitting}>
+          <MagnifyingGlass size={20} />
+          {width && width > breakpoint && 'Buscar'}
+        </button>
+      )}
       {haveSearched && (
         <button onClick={handleClearQuery}>
           <X size={20} /> {width && width > breakpoint && 'Limpar'}
