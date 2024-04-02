@@ -4,6 +4,7 @@ import { createContext, useContextSelector } from 'use-context-selector';
 import { AuthContext } from '../hooks/useAuth';
 import { useInitialPeriod } from '../hooks/useInitialPeriod';
 import { parseSelectAvailabePeriods } from '../utils/parseSelectAvailablePeriods';
+import dayjs from 'dayjs';
 
 interface InstallmentsProviderProps {
   children: ReactNode;
@@ -53,18 +54,20 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
   const user = useContextSelector(AuthContext, (context) => {
     return context.user;
   });
-
   const initialPeriod = useInitialPeriod();
 
   const [installments, setInstallments] = useState<Installment[]>([]);
+
   const [installmentCategories, setInstallmentCategories] = useState<
     InstallmentCategory[]
   >([]);
+
   const [params, setParams] = useState({
     page: '1',
     perPage: '10',
     period: initialPeriod,
   });
+
   const [periodsAvailable, setPeriodsAvailable] = useState<
     { label: string; value: string[] }[]
   >([]);
@@ -114,29 +117,41 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
     }
   }, []);
 
-  const createInstallment = useCallback(async (data: CreateInstallmentData) => {
-    const { installmentCategoryId, description, value, type, date } = data;
+  const createInstallment = useCallback(
+    async (data: CreateInstallmentData) => {
+      const { installmentCategoryId, description, value, type, date } = data;
 
-    const response = await api.post(
-      '/installment',
-      {
-        description,
-        installmentCategoryId,
-        value: Number(value.replace(/\D/g, '')),
-        type: type.toLocaleUpperCase(),
-        date,
-      },
-      {
-        headers: {
-          Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('token')!),
+      const dateAndPeriodAreTheSame =
+        dayjs(date).format('MM/YYYY') === dayjs(period[0]).format('MM/YYYY');
+
+      const response = await api.post(
+        '/installment',
+        {
+          description,
+          installmentCategoryId,
+          value: Number(value.replace(/\D/g, '')),
+          type: type.toLocaleUpperCase(),
+          date,
         },
+        {
+          headers: {
+            Authorization:
+              'Bearer ' + JSON.parse(localStorage.getItem('token')!),
+          },
+        }
+      );
+
+      const newInstallment = response?.data?.installment as Installment;
+
+      if (dateAndPeriodAreTheSame) {
+        setInstallments((oldState: Installment[]) => [
+          newInstallment,
+          ...oldState,
+        ]);
       }
-    );
-
-    const newInstallment = response?.data?.installment as Installment;
-
-    setInstallments((oldState: Installment[]) => [newInstallment, ...oldState]);
-  }, []);
+    },
+    [period]
+  );
 
   const fetchInstallmentsPeriodsAvailable = useCallback(async () => {
     const response = await api.get(

@@ -16,10 +16,11 @@ import { DateInput } from '../DatePicker';
 import { useEffect } from 'react';
 import { formatCurrency } from '../../utils/formatter';
 import { SelectCreatable } from '../Select';
+import { useWindowSize } from '../../hooks/useWindowSize';
 
 const newInstallmentFormSchema = z.object({
   description: z.optional(z.string()),
-  value: z.string(),
+  value: z.string().min(3),
   installmentCategoryId: z.string(),
   date: z.date(),
   type: z.enum(['INCOME', 'OUTCOME']),
@@ -28,6 +29,8 @@ const newInstallmentFormSchema = z.object({
 type NewInstallmentFormInputs = z.infer<typeof newInstallmentFormSchema>;
 
 export function NewInstallmentModal() {
+  const { width } = useWindowSize();
+
   const createNewInstallment = useContextSelector(
     InstallmentsContext,
     (context) => context.createInstallment
@@ -77,7 +80,7 @@ export function NewInstallmentModal() {
   return (
     <Dialog.Portal>
       <Overlay />
-      <Content>
+      <Content width={width}>
         <Dialog.Title>Adicionar</Dialog.Title>
 
         <CloseButton onClick={() => reset()}>

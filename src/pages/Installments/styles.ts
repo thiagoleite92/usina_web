@@ -18,6 +18,10 @@ export const InstallmentsTable = styled.table`
     text-align: left;
     padding: 1.25rem 2rem;
     background: ${(props) => props.theme['gray-700']};
+
+    &:last-child {
+      text-align: center;
+    }
   }
 
   td {

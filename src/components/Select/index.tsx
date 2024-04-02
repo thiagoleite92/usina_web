@@ -6,7 +6,7 @@ type SelectInputProps = ControllerRenderProps & {
   placeholder: string;
   options: { value: string | string[]; label: string }[];
   defaultValue?: { value: string | string[]; label: string };
-  clear: boolean;
+  clear?: boolean;
 };
 
 type SelectCreatableProps = ControllerRenderProps &
