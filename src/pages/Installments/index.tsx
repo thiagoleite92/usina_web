@@ -1,12 +1,13 @@
+import * as Dialog from '@radix-ui/react-dialog';
+
 import { Header } from '../../components/Header';
 import { Summary } from '../../components/Summary';
 import { SearchForm } from './components/SearchForm';
 import {
   PriceHighLight,
   InstallmentsContainer,
-  PencilIcon,
-  TrashIcon,
   InstallmentsTable,
+  OptionsContainer,
 } from './styles';
 import { dateFormatter, priceFormatter } from '../../utils/formatter';
 import { useContextSelector } from 'use-context-selector';
@@ -16,6 +17,10 @@ import { useWindowSize } from '../../hooks/useWindowSize';
 import { InstallmentCard } from './components/InstallmentCard';
 import { breakpoint } from '../../const/breakpoint';
 import { columnHeads } from '../../const/columnsHead';
+import { Pencil, Trash } from 'phosphor-react';
+import { Content, Overlay } from '../../components/FormInstallment/styles';
+import { DeleteInstallment } from '../../components/DeleteInstallment';
+import { FormInstallment } from '../../components/FormInstallment';
 
 export function InstallmentsPage() {
   const { installments, installmentCategories } = useContextSelector(
@@ -81,8 +86,29 @@ export function InstallmentsPage() {
                               gap: '8px',
                             }}
                           >
-                            <PencilIcon size={20} />
-                            <TrashIcon size={20} />
+                            <OptionsContainer>
+                              <Dialog.Root>
+                                <Dialog.Trigger asChild>
+                                  <Pencil size={24} />
+                                </Dialog.Trigger>
+                                <Dialog.Portal>
+                                  <FormInstallment {...installment} />
+                                </Dialog.Portal>
+                              </Dialog.Root>
+                              <Dialog.Root>
+                                <Overlay />
+                                <Dialog.Trigger asChild>
+                                  <Trash size={24} />
+                                </Dialog.Trigger>
+                                <Dialog.Portal>
+                                  <Content width={width}>
+                                    <DeleteInstallment
+                                      installmentId={installment?.id}
+                                    />
+                                  </Content>
+                                </Dialog.Portal>
+                              </Dialog.Root>
+                            </OptionsContainer>
                           </td>
                         )}
                       </tr>
@@ -101,6 +127,7 @@ export function InstallmentsPage() {
                   {...installment}
                   key={installment.id}
                   isAdmin={user.role === 'ADMIN'}
+                  installmentCategories={installmentCategories}
                 />
               );
             })}

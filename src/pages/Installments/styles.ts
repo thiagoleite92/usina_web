@@ -1,4 +1,3 @@
-import { Pencil, Trash } from 'phosphor-react';
 import styled from 'styled-components';
 
 export const InstallmentsContainer = styled.main`
@@ -53,14 +52,20 @@ export const PriceHighLight = styled.span<PriceHighLightProps>`
       : props.theme['red-300']};
 `;
 
-export const PencilIcon = styled(Pencil)`
-  color: ${(props) => props.theme['green-300']};
-  &:hover {
-    cursor: 'pointer';
-  }
-`;
-
-export const TrashIcon = styled(Trash)`
-  color: ${(props) => props.theme['red-300']};
+export const OptionsContainer = styled.div`
+  gap: 10px;
+  padding: 0.5rem;
+  display: flex;
+  gap: 1.5rem;
   cursor: 'pointer';
+
+  svg {
+    color: ${(props) => props.theme['green-300']};
+    &:hover {
+    }
+
+    & + svg {
+      color: ${(props) => props.theme['red-300']};
+    }
+  }
 `;

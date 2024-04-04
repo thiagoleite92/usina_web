@@ -11,7 +11,7 @@ export const SelectContainer = styled(Creatable)`
     0px 10px 20px -15px rgba(22, 23, 24, 0.2);
 
   .react-select__single-value {
-    color: ${(prop) => prop.theme['gray-400']};
+    color: ${(prop) => prop.theme['gray-100']};
   }
 
   .react-select__indicators {

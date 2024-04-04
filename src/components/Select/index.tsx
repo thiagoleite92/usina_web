@@ -2,12 +2,12 @@
 
 import { ControllerRenderProps } from 'react-hook-form';
 import { SelectContainer } from './styles';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 type SelectInputProps = ControllerRenderProps & {
   placeholder: string;
   options: { value: string | string[]; label: string }[];
-  clear?: boolean;
+  defaultOption?: any;
 };
 
 type SelectCreatableProps = ControllerRenderProps &
@@ -20,10 +20,17 @@ export function SelectCreatable({
   placeholder,
   options,
   createNewIOptionLabel,
+  defaultOption,
 }: SelectCreatableProps) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [value, setValue] = useState<{ label: string; value: string[] } | null>(
+    null
+  );
+
   const handleChange = (e: any) => {
-    onChange(e?.label);
+    console.log(e);
+    setValue({ value: e?.value, label: e?.label });
+    onChange(e);
   };
 
   return (
@@ -34,6 +41,7 @@ export function SelectCreatable({
       formatCreateLabel={(value) => `${createNewIOptionLabel}: ${value}`}
       className="react-select-container"
       classNamePrefix="react-select"
+      value={value || options.find((item) => item?.value === defaultOption)}
     />
   );
 }
@@ -42,7 +50,6 @@ export function SelectInput({
   onChange,
   placeholder,
   options,
-  clear,
 }: SelectInputProps) {
   const [value, setValue] = useState<{ label: string; value: string[] } | null>(
     null
@@ -52,12 +59,6 @@ export function SelectInput({
     setValue({ value: e?.value, label: e?.label });
     onChange(e?.value);
   };
-
-  useEffect(() => {
-    if (!clear) {
-      setValue(null);
-    }
-  }, [clear]);
 
   return (
     options && (

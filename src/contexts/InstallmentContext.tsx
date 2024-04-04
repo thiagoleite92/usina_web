@@ -11,7 +11,7 @@ interface InstallmentsProviderProps {
 }
 
 export interface Installment {
-  id: number;
+  id: string;
   description: string;
   type: 'INCOME' | 'OUTCOME';
   value: number;
@@ -20,7 +20,7 @@ export interface Installment {
   createdAt: string;
 }
 
-interface InstallmentCategory {
+export interface InstallmentCategory {
   id: string;
   installmentCategory: string;
 }
@@ -46,6 +46,7 @@ interface InstallmentContextType {
   fetchInstallments(query?: QueryParams): Promise<void>;
   createInstallment(data: CreateInstallmentData): Promise<void>;
   handleQueryParams(queryParams: QueryParams): void;
+  deleteInstallment: (installmentId: string) => void;
 }
 
 export const InstallmentsContext = createContext({} as InstallmentContextType);
@@ -169,6 +170,12 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
     setPeriodsAvailable(teste);
   }, []);
 
+  const deleteInstallment = (installmentId: string) => {
+    setInstallments((oldState) =>
+      oldState.filter((installment) => installment?.id !== installmentId)
+    );
+  };
+
   useEffect(() => {
     if (!user) return;
     fetchInstallments();
@@ -188,6 +195,7 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
         createInstallment,
         handleQueryParams,
         periodsAvailable,
+        deleteInstallment,
       }}
     >
       {children}

@@ -2,9 +2,10 @@ import { Pencil, TrashSimple } from 'phosphor-react';
 import { dateFormatter, priceFormatter } from '../../../../utils/formatter';
 import { PriceHighLight } from '../../styles';
 import { InstallmentCardContainer, OptionsContainer } from './styles';
+import { InstallmentCategory } from '../../../../contexts/InstallmentContext';
 
 interface InstallmentCardProps {
-  id: number;
+  id: string;
   description: string;
   type: 'INCOME' | 'OUTCOME';
   value: number;
@@ -12,6 +13,7 @@ interface InstallmentCardProps {
   createdAt: string;
   isAdmin: boolean;
   date: string;
+  installmentCategories: InstallmentCategory[];
 }
 
 export function InstallmentCard({
@@ -22,11 +24,18 @@ export function InstallmentCard({
   value,
   isAdmin,
   date,
+  installmentCategories,
 }: InstallmentCardProps) {
   return (
     <InstallmentCardContainer>
       <div className="installment-options">
-        <span>{description}</span>
+        <span>
+          {
+            installmentCategories.find(
+              (category) => category.id === installmentCategoryId
+            )?.installmentCategory
+          }
+        </span>
         {isAdmin && (
           <OptionsContainer>
             <button onClick={() => console.log(id)}>
@@ -44,7 +53,7 @@ export function InstallmentCard({
       </PriceHighLight>
 
       <div className="installment-info">
-        <span>{installmentCategoryId}</span>
+        <span>{description}</span>
         <span>
           {dateFormatter({
             month: 'short',

@@ -1,8 +1,8 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { HeaderContainer, HeaderContent, NewInstallmentButton } from './styles';
 
-import { NewInstallmentModal } from '../NewInstallMent';
 import { Profile } from './components/Profile';
+import { FormInstallment } from '../FormInstallment';
 
 export function Header() {
   return (
@@ -16,7 +16,7 @@ export function Header() {
           <Dialog.Trigger asChild>
             <NewInstallmentButton>Adicionar</NewInstallmentButton>
           </Dialog.Trigger>
-          <NewInstallmentModal />
+          <FormInstallment />
         </Dialog.Root>
       </HeaderContent>
     </HeaderContainer>

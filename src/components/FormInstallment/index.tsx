@@ -11,7 +11,10 @@ import { ArrowCircleDown, ArrowCircleUp, X } from 'phosphor-react';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useContextSelector } from 'use-context-selector';
-import { InstallmentsContext } from '../../contexts/InstallmentContext';
+import {
+  Installment,
+  InstallmentsContext,
+} from '../../contexts/InstallmentContext';
 import { DateInput } from '../DatePicker';
 import { useEffect } from 'react';
 import { formatCurrency } from '../../utils/formatter';
@@ -28,24 +31,28 @@ const newInstallmentFormSchema = z.object({
 
 type NewInstallmentFormInputs = z.infer<typeof newInstallmentFormSchema>;
 
-export function NewInstallmentModal() {
+interface FormInstallmentProps extends Installment {}
+
+export function FormInstallment({
+  value,
+  id,
+  type,
+  date,
+  description,
+  installmentCategoryId,
+}: FormInstallmentProps) {
   const { width } = useWindowSize();
 
-  const createNewInstallment = useContextSelector(
+  const { createNewInstallment, installmentCategories } = useContextSelector(
     InstallmentsContext,
-    (context) => context.createInstallment
-  );
+    (context) => ({
+      createNewInstallment: context.createInstallment,
 
-  const installmentCategories = useContextSelector(
-    InstallmentsContext,
-    (context) => {
-      context.installmentCategories;
-
-      return context.installmentCategories.map((category) => ({
+      installmentCategories: context.installmentCategories.map((category) => ({
         label: category.installmentCategory,
         value: category.id,
-      }));
-    }
+      })),
+    })
   );
 
   const {
@@ -55,15 +62,19 @@ export function NewInstallmentModal() {
     reset,
     watch,
     setValue,
-
     formState: { isSubmitting },
   } = useForm<NewInstallmentFormInputs>({
     resolver: zodResolver(newInstallmentFormSchema),
     defaultValues: {
-      installmentCategoryId: '',
-      value: '',
-      description: '',
-      type: 'INCOME',
+      value: value ? value?.toString() : '',
+      description: description ? description : '',
+      type: type ? type : 'INCOME',
+      ...(date && { date: new Date(date) }),
+      ...(installmentCategoryId && {
+        installmentCategoryId: installmentCategories.find(
+          (category) => category.value === installmentCategoryId
+        )?.value,
+      }),
     },
   });
 
@@ -74,23 +85,27 @@ export function NewInstallmentModal() {
   const valueWatch = watch('value');
 
   useEffect(() => {
-    return setValue('value', formatCurrency(valueWatch));
+    setValue('value', formatCurrency(valueWatch));
   }, [valueWatch, setValue]);
 
   return (
     <Dialog.Portal>
       <Overlay />
       <Content width={width}>
-        <Dialog.Title>Adicionar</Dialog.Title>
+        <Dialog.Title>{id ? 'Editar' : 'Salvar'}</Dialog.Title>
 
-        <CloseButton onClick={() => reset()}>
+        <CloseButton
+          onClick={() => {
+            reset();
+          }}
+        >
           <X size={24} />
         </CloseButton>
 
         <form onSubmit={handleSubmit(handleNewInstallment)}>
           <Controller
             control={control}
-            {...register('type')}
+            name="type"
             render={({ field }) => (
               <InstallmentType
                 onValueChange={field.onChange}
@@ -115,11 +130,19 @@ export function NewInstallmentModal() {
                 placeholder="Selecione ou Insira Nova Categoria"
                 createNewIOptionLabel="Criar Categoria"
                 {...field}
+                defaultOption={installmentCategoryId}
               />
             )}
           />
 
-          <input type="text" placeholder="Valor" {...register('value')} />
+          <Controller
+            control={control}
+            name="value"
+            defaultValue="2"
+            render={({ field }) => (
+              <input type="text" placeholder="Valor" {...field} />
+            )}
+          />
 
           <input
             type="text"
@@ -141,7 +164,7 @@ export function NewInstallmentModal() {
           />
 
           <button type="submit" disabled={isSubmitting}>
-            Adicionar
+            Salvar
           </button>
         </form>
       </Content>
