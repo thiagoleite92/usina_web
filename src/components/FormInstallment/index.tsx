@@ -94,6 +94,7 @@ export function FormInstallment({
         handleNewInstallmentDialog(false);
       }
       createNewInstallment(data);
+      reset();
     }
 
     return;

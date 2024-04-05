@@ -17,6 +17,8 @@ interface InstallmentCardProps {
   isAdmin: boolean;
   date: string;
   installmentCategories: InstallmentCategory[];
+  handleDeleteDialog: () => void;
+  handleEditDialog: () => void;
 }
 
 export function InstallmentCard({
@@ -28,6 +30,8 @@ export function InstallmentCard({
   isAdmin,
   date,
   installmentCategories,
+  handleDeleteDialog,
+  handleEditDialog,
 }: InstallmentCardProps) {
   const installment = {
     description,
@@ -59,14 +63,20 @@ export function InstallmentCard({
                 <Pencil size={24} />
               </Dialog.Trigger>
               <Dialog.Portal>
-                <FormInstallment {...installment} />
+                <FormInstallment
+                  {...installment}
+                  handleEditDialog={handleEditDialog}
+                />
               </Dialog.Portal>
             </Dialog.Root>
             <Dialog.Root>
               <Dialog.Trigger asChild>
                 <Trash size={24} />
               </Dialog.Trigger>
-              <DeleteInstallment installmentId={id} />
+              <DeleteInstallment
+                installmentId={id}
+                handleDeleteDialog={handleDeleteDialog}
+              />
             </Dialog.Root>
           </OptionsContainer>
         )}

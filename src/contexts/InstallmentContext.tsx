@@ -129,48 +129,69 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
       const dateAndPeriodAreTheSame =
         dayjs(date).format('MM/YYYY') === dayjs(period[0]).format('MM/YYYY');
 
-      await api.put(
-        `/installment/${id}`,
-        {
-          description,
-          installmentCategoryId,
-          value: Number(value.replace(/\D/g, '')),
-          type: type.toLocaleUpperCase(),
-          date,
-        },
-        {
-          headers: {
-            Authorization:
-              'Bearer ' + JSON.parse(localStorage.getItem('token')!),
-          },
-        }
+      const existingCategory = installmentCategories.some(
+        (category) => category.installmentCategory === installmentCategoryId
       );
 
-      if (dateAndPeriodAreTheSame) {
-        setInstallments((oldState: Installment[]) => {
-          const saveState = oldState.slice();
-
-          const existingInstallment = saveState.find(
-            (installment) => installment.id === id
-          );
-
-          if (existingInstallment) {
-            existingInstallment.date = date.toISOString();
-            existingInstallment.value = Number(value.replace(/\D/g, ''));
-            existingInstallment.type = type;
-            existingInstallment.installmentCategoryId = installmentCategoryId;
-            existingInstallment.description = description ?? '';
+      try {
+        await api.put(
+          `/installment/${id}`,
+          {
+            description,
+            installmentCategoryId,
+            value: Number(value.replace(/\D/g, '')),
+            type: type.toLocaleUpperCase(),
+            date,
+          },
+          {
+            headers: {
+              Authorization:
+                'Bearer ' + JSON.parse(localStorage.getItem('token')!),
+            },
           }
-
-          return saveState;
-        });
-      } else {
-        setInstallments((oldState: Installment[]) =>
-          oldState.filter((installment) => installment.id !== id)
         );
+
+        if (dateAndPeriodAreTheSame) {
+          setInstallments((oldState: Installment[]) => {
+            const saveState = oldState.slice();
+
+            const existingInstallment = saveState.find(
+              (installment) => installment.id === id
+            );
+
+            if (existingInstallment) {
+              existingInstallment.date = date.toISOString();
+              existingInstallment.value = Number(value.replace(/\D/g, ''));
+              existingInstallment.type = type;
+              existingInstallment.installmentCategoryId = installmentCategoryId;
+              existingInstallment.description = description ?? '';
+            }
+
+            return saveState;
+          });
+        } else {
+          setInstallments((oldState: Installment[]) =>
+            oldState.filter((installment) => installment.id !== id)
+          );
+        }
+
+        if (!existingCategory) {
+          setInstallmentCategories((oldState: InstallmentCategory[]) => {
+            const saveState = oldState.slice();
+
+            saveState.push({
+              id: installmentCategoryId,
+              installmentCategory: installmentCategoryId,
+            });
+
+            return saveState;
+          });
+        }
+      } catch (error) {
+        console.log(error);
       }
     },
-    [period]
+    [installmentCategories, period]
   );
 
   const createInstallment = useCallback(
@@ -180,33 +201,88 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
       const dateAndPeriodAreTheSame =
         dayjs(date).format('MM/YYYY') === dayjs(period[0]).format('MM/YYYY');
 
-      const response = await api.post(
-        '/installment',
-        {
-          description,
-          installmentCategoryId,
-          value: Number(value.replace(/\D/g, '')),
-          type: type.toLocaleUpperCase(),
-          date,
-        },
-        {
-          headers: {
-            Authorization:
-              'Bearer ' + JSON.parse(localStorage.getItem('token')!),
-          },
-        }
+      const existingPeriod = periodsAvailable.some(
+        (period) =>
+          period?.label ===
+          `${dayjs()
+            .month(new Date(date).getMonth())
+            .format('MMMM')}/${new Date(date).getFullYear()}`
       );
 
-      const newInstallment = response?.data?.installment as Installment;
+      const existingCategory = installmentCategories.some(
+        (category) => category.installmentCategory === installmentCategoryId
+      );
 
-      if (dateAndPeriodAreTheSame) {
-        setInstallments((oldState: Installment[]) => [
-          newInstallment,
-          ...oldState,
-        ]);
+      try {
+        const response = await api.post(
+          '/installment',
+          {
+            description,
+            installmentCategoryId,
+            value: Number(value.replace(/\D/g, '')),
+            type: type.toLocaleUpperCase(),
+            date,
+          },
+          {
+            headers: {
+              Authorization:
+                'Bearer ' + JSON.parse(localStorage.getItem('token')!),
+            },
+          }
+        );
+
+        const newInstallment = response?.data?.installment as Installment;
+
+        if (dateAndPeriodAreTheSame) {
+          setInstallments((oldState: Installment[]) => [
+            { ...newInstallment, installmentCategoryId },
+            ...oldState,
+          ]);
+        }
+
+        if (!existingCategory) {
+          setInstallmentCategories((oldState: InstallmentCategory[]) => {
+            const saveState = oldState.slice();
+
+            saveState.push({
+              id: installmentCategoryId,
+              installmentCategory: installmentCategoryId,
+            });
+
+            return saveState;
+          });
+        }
+
+        if (!existingPeriod) {
+          setPeriodsAvailable(
+            (oldState: { label: string; value: string[] }[]) => {
+              const saveState = oldState.slice();
+
+              const [year, month] = new Date(date)
+                .toISOString()
+                ?.split('-') || ['', ''];
+
+              const parseMonth = parseInt(month) - 1;
+
+              saveState.push({
+                label: `${dayjs().month(parseMonth).format('MMMM')}/${year}`,
+                value: [
+                  `${year}-${month}-01`,
+                  `${year}-${month}-${dayjs(
+                    `${year}-${month}-01`
+                  ).daysInMonth()}`,
+                ],
+              });
+
+              return saveState;
+            }
+          );
+        }
+      } catch (error) {
+        console.log(error);
       }
     },
-    [period]
+    [installmentCategories, period, periodsAvailable]
   );
 
   const fetchInstallmentsPeriodsAvailable = useCallback(async () => {

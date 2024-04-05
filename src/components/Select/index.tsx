@@ -3,6 +3,7 @@
 import { ControllerRenderProps } from 'react-hook-form';
 import { SelectContainer } from './styles';
 import { useState } from 'react';
+import { useInitialPeriod } from '../../hooks/useInitialPeriod';
 
 type SelectInputProps = ControllerRenderProps & {
   placeholder: string;
@@ -28,7 +29,6 @@ export function SelectCreatable({
   );
 
   const handleChange = (e: any) => {
-    console.log(e);
     setValue({ value: e?.value, label: e?.label });
     onChange(e?.label);
   };
@@ -92,6 +92,12 @@ export function UnitSelect({
     onChange(e);
   };
 
+  const initialPeriod = useInitialPeriod();
+
+  const initialOption = options?.findIndex(
+    ({ value }) => value[0] === initialPeriod[0]
+  );
+
   return (
     options && (
       <SelectContainer
@@ -100,7 +106,7 @@ export function UnitSelect({
         placeholder={placeholder}
         className="react-select-container"
         classNamePrefix="react-select"
-        value={value || options[1]}
+        value={value || options[initialOption]}
       />
     )
   );

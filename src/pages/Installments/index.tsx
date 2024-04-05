@@ -163,6 +163,8 @@ export function InstallmentsPage() {
                   key={installment.id}
                   isAdmin={user.role === 'ADMIN'}
                   installmentCategories={installmentCategories}
+                  handleDeleteDialog={handleDeleteDialog}
+                  handleEditDialog={handleEditDialog}
                 />
               );
             })}
