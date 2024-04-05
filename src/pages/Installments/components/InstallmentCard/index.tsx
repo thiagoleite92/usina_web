@@ -1,8 +1,12 @@
-import { Pencil, TrashSimple } from 'phosphor-react';
+import * as Dialog from '@radix-ui/react-dialog';
+
+import { Pencil, Trash } from 'phosphor-react';
 import { dateFormatter, priceFormatter } from '../../../../utils/formatter';
 import { PriceHighLight } from '../../styles';
 import { InstallmentCardContainer, OptionsContainer } from './styles';
 import { InstallmentCategory } from '../../../../contexts/InstallmentContext';
+import { FormInstallment } from '../../../../components/FormInstallment';
+import { DeleteInstallment } from '../../../../components/DeleteInstallment';
 
 interface InstallmentCardProps {
   id: string;
@@ -10,7 +14,6 @@ interface InstallmentCardProps {
   type: 'INCOME' | 'OUTCOME';
   value: number;
   installmentCategoryId: string;
-  createdAt: string;
   isAdmin: boolean;
   date: string;
   installmentCategories: InstallmentCategory[];
@@ -26,24 +29,45 @@ export function InstallmentCard({
   date,
   installmentCategories,
 }: InstallmentCardProps) {
+  const installment = {
+    description,
+    id,
+    installmentCategoryId,
+    type,
+    value,
+    isAdmin,
+    date,
+    installmentCategories,
+  };
+
   return (
     <InstallmentCardContainer>
       <div className="installment-options">
         <span>
           {
             installmentCategories.find(
-              (category) => category.id === installmentCategoryId
+              (category) =>
+                category.id === installmentCategoryId ||
+                category.installmentCategory === installmentCategoryId
             )?.installmentCategory
           }
         </span>
         {isAdmin && (
           <OptionsContainer>
-            <button onClick={() => console.log(id)}>
-              <Pencil size={20} />
-            </button>
-            <button>
-              <TrashSimple size={20} />
-            </button>
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
+                <Pencil size={24} />
+              </Dialog.Trigger>
+              <Dialog.Portal>
+                <FormInstallment {...installment} />
+              </Dialog.Portal>
+            </Dialog.Root>
+            <Dialog.Root>
+              <Dialog.Trigger asChild>
+                <Trash size={24} />
+              </Dialog.Trigger>
+              <DeleteInstallment installmentId={id} />
+            </Dialog.Root>
           </OptionsContainer>
         )}
       </div>

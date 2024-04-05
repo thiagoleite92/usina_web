@@ -28,6 +28,16 @@ export const InstallmentCardContainer = styled.div`
       gap: 10px;
     }
   }
+
+  svg {
+    color: ${(props) => props.theme['green-300']};
+    &:hover {
+    }
+
+    & + svg {
+      color: ${(props) => props.theme['red-300']};
+    }
+  }
 `;
 
 export const OptionsContainer = styled.div`

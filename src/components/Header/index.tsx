@@ -3,8 +3,15 @@ import { HeaderContainer, HeaderContent, NewInstallmentButton } from './styles';
 
 import { Profile } from './components/Profile';
 import { FormInstallment } from '../FormInstallment';
+import { useState } from 'react';
 
 export function Header() {
+  const [formDialog, setFormDialog] = useState(false);
+
+  const handleNewInstallmentDialog = (status: boolean) => {
+    setFormDialog(status);
+  };
+
   return (
     <HeaderContainer>
       <HeaderContent>
@@ -12,11 +19,17 @@ export function Header() {
 
         {/* <img src={logoImg} alt="" /> */}
 
-        <Dialog.Root>
+        <Dialog.Root open={formDialog}>
           <Dialog.Trigger asChild>
-            <NewInstallmentButton>Adicionar</NewInstallmentButton>
+            <NewInstallmentButton
+              onClick={() => handleNewInstallmentDialog(true)}
+            >
+              Adicionar
+            </NewInstallmentButton>
           </Dialog.Trigger>
-          <FormInstallment />
+          <FormInstallment
+            handleNewInstallmentDialog={handleNewInstallmentDialog}
+          />
         </Dialog.Root>
       </HeaderContent>
     </HeaderContainer>

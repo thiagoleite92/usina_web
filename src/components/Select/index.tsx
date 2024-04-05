@@ -30,7 +30,7 @@ export function SelectCreatable({
   const handleChange = (e: any) => {
     console.log(e);
     setValue({ value: e?.value, label: e?.label });
-    onChange(e);
+    onChange(e?.label);
   };
 
   return (

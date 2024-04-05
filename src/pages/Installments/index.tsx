@@ -18,11 +18,16 @@ import { InstallmentCard } from './components/InstallmentCard';
 import { breakpoint } from '../../const/breakpoint';
 import { columnHeads } from '../../const/columnsHead';
 import { Pencil, Trash } from 'phosphor-react';
-import { Content, Overlay } from '../../components/FormInstallment/styles';
 import { DeleteInstallment } from '../../components/DeleteInstallment';
 import { FormInstallment } from '../../components/FormInstallment';
+import { useState } from 'react';
 
 export function InstallmentsPage() {
+  const [rowDelete, setRowDelete] = useState<string | null>(null);
+  const [rowEdit, setRowEdit] = useState<string | null>(null);
+  const [, setShowDeleteDialog] = useState(false);
+  const [, setShowEditDialog] = useState(false);
+
   const { installments, installmentCategories } = useContextSelector(
     InstallmentsContext,
     (context) => ({
@@ -34,6 +39,25 @@ export function InstallmentsPage() {
   const user = useContextSelector(AuthContext, (context) => context?.user);
 
   const { width } = useWindowSize();
+
+  const handleDeleteDialog = (id?: string) => {
+    if (id) {
+      setRowDelete(id);
+      return;
+    }
+
+    setRowDelete(null);
+    setShowDeleteDialog(false);
+  };
+
+  const handleEditDialog = (id?: string) => {
+    if (id) {
+      setRowEdit(id);
+      return;
+    }
+    setRowEdit(null);
+    setShowEditDialog(false);
+  };
 
   return (
     <>
@@ -61,7 +85,9 @@ export function InstallmentsPage() {
                             installmentCategories.find(
                               (category) =>
                                 category.id ===
-                                installment?.installmentCategoryId
+                                  installment?.installmentCategoryId ||
+                                category.installmentCategory ===
+                                  installment?.installmentCategoryId
                             )?.installmentCategory
                           }
                         </td>
@@ -87,26 +113,35 @@ export function InstallmentsPage() {
                             }}
                           >
                             <OptionsContainer>
-                              <Dialog.Root>
+                              <Dialog.Root open={installment?.id === rowEdit}>
                                 <Dialog.Trigger asChild>
-                                  <Pencil size={24} />
+                                  <Pencil
+                                    size={24}
+                                    onClick={() =>
+                                      handleEditDialog(installment.id)
+                                    }
+                                  />
                                 </Dialog.Trigger>
                                 <Dialog.Portal>
-                                  <FormInstallment {...installment} />
+                                  <FormInstallment
+                                    {...installment}
+                                    handleEditDialog={handleEditDialog}
+                                  />
                                 </Dialog.Portal>
                               </Dialog.Root>
-                              <Dialog.Root>
-                                <Overlay />
-                                <Dialog.Trigger asChild>
+                              <Dialog.Root open={installment?.id === rowDelete}>
+                                <Dialog.Trigger
+                                  asChild
+                                  onClick={() =>
+                                    handleDeleteDialog(installment.id)
+                                  }
+                                >
                                   <Trash size={24} />
                                 </Dialog.Trigger>
-                                <Dialog.Portal>
-                                  <Content width={width}>
-                                    <DeleteInstallment
-                                      installmentId={installment?.id}
-                                    />
-                                  </Content>
-                                </Dialog.Portal>
+                                <DeleteInstallment
+                                  installmentId={installment?.id}
+                                  handleDeleteDialog={handleDeleteDialog}
+                                />
                               </Dialog.Root>
                             </OptionsContainer>
                           </td>

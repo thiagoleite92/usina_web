@@ -31,7 +31,10 @@ const newInstallmentFormSchema = z.object({
 
 type NewInstallmentFormInputs = z.infer<typeof newInstallmentFormSchema>;
 
-interface FormInstallmentProps extends Installment {}
+interface FormInstallmentProps extends Partial<Installment> {
+  handleEditDialog?: () => void;
+  handleNewInstallmentDialog?: (status: boolean) => void;
+}
 
 export function FormInstallment({
   value,
@@ -40,20 +43,21 @@ export function FormInstallment({
   date,
   description,
   installmentCategoryId,
+  handleEditDialog,
+  handleNewInstallmentDialog,
 }: FormInstallmentProps) {
   const { width } = useWindowSize();
 
-  const { createNewInstallment, installmentCategories } = useContextSelector(
-    InstallmentsContext,
-    (context) => ({
+  const { createNewInstallment, installmentCategories, editInstallment } =
+    useContextSelector(InstallmentsContext, (context) => ({
       createNewInstallment: context.createInstallment,
+      editInstallment: context.editInstallment,
 
       installmentCategories: context.installmentCategories.map((category) => ({
         label: category.installmentCategory,
         value: category.id,
       })),
-    })
-  );
+    }));
 
   const {
     control,
@@ -79,7 +83,20 @@ export function FormInstallment({
   });
 
   async function handleNewInstallment(data: NewInstallmentFormInputs) {
-    createNewInstallment(data);
+    if (id) {
+      editInstallment({ ...data, id });
+      if (handleEditDialog) {
+        handleEditDialog();
+      }
+      return;
+    } else {
+      if (handleNewInstallmentDialog) {
+        handleNewInstallmentDialog(false);
+      }
+      createNewInstallment(data);
+    }
+
+    return;
   }
 
   const valueWatch = watch('value');
@@ -97,6 +114,12 @@ export function FormInstallment({
         <CloseButton
           onClick={() => {
             reset();
+            if (handleEditDialog) {
+              handleEditDialog();
+            }
+            if (handleNewInstallmentDialog) {
+              handleNewInstallmentDialog(false);
+            }
           }}
         >
           <X size={24} />
