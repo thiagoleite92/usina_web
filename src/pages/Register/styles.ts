@@ -1,20 +1,27 @@
 import styled from 'styled-components';
+import { breakpoint } from '../../const/breakpoint';
 
-export const LoginContainer = styled.div`
+export const RegisterContainer = styled.div`
   display: flex;
   margin: 0 auto;
   justify-content: center;
   align-items: center;
   height: 100vh;
   color: black;
+  padding-bottom: 15px;
 `;
 
-export const LoginForm = styled.form`
+interface RegisterFormProps {
+  width: number;
+}
+
+export const RegisterForm = styled.form<RegisterFormProps>`
   width: 50vh;
   margin-top: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: ${(props) =>
+    props.width && props.width > breakpoint ? '0.75rem' : '0.5rem'};
   background: ${(props) => props.theme['white']};
   padding: 1.5rem;
   border-radius: 6px;
@@ -65,12 +72,21 @@ export const LoginForm = styled.form`
   }
 `;
 
+export const ResidenceContainer = styled.div`
+  display: flex;
+  gap: 0.75rem;
+
+  .input-apto {
+    width: 100%;
+    padding: 1.42rem;
+  }
+`;
+
 export const NewAccountContainer = styled.div`
   color: black;
   display: flex;
   flex-direction: column;
   align-items: center;
-
   gap: 0.75rem;
 
   .link-register {

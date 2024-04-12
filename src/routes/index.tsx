@@ -2,6 +2,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import { Login } from '../pages/Login';
 import { InstallmentsPage } from '../pages/Installments';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { Register } from '../pages/Register';
 
 export function Routes() {
   const routes = useRoutes([
@@ -9,6 +10,7 @@ export function Routes() {
       path: '/',
       element: <Navigate to="/home" />,
     },
+
     {
       path: '/home',
       element: (
@@ -20,6 +22,10 @@ export function Routes() {
     {
       path: '/auth/login',
       element: <Login />,
+    },
+    {
+      path: '/auth/cadastro',
+      element: <Register />,
     },
   ]);
 

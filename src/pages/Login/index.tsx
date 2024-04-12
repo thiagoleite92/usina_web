@@ -1,18 +1,24 @@
 import { z } from 'zod';
-import { LoginContainer, LoginForm } from './styles';
-import { useForm } from 'react-hook-form';
+import { LoginContainer, LoginForm, NewAccountContainer } from './styles';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { api } from '../../lib/axios';
 import { Auth } from '../../types/AuthType';
 import { AxiosAuthResponse } from '../../types/AxiosAuthResponse';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AuthContext } from '../../hooks/useAuth';
 import { useContextSelector } from 'use-context-selector';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const loginFormSchema = z.object({
-  email: z.string().email(),
-  password: z.string(),
+  email: z
+    .string({ required_error: 'Insira seu E-mail' })
+    .email({ message: 'E-mail inválido' })
+    .min(3)
+    .max(50),
+  password: z
+    .string({ required_error: 'Insira a senha' })
+    .min(1, { message: 'Insira a senha' }),
 });
 
 type LoginFormType = z.infer<typeof loginFormSchema>;
@@ -27,6 +33,8 @@ export function Login() {
     })
   );
 
+  const [errorMessage, setErrorMessage] = useState('');
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,11 +42,15 @@ export function Login() {
   }, [navigate, user]);
 
   const {
+    control,
     handleSubmit,
-    register,
-    formState: { isSubmitting },
+    formState: { isSubmitting, errors },
   } = useForm<LoginFormType>({
     resolver: zodResolver(loginFormSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
   async function handleLogin(data: LoginFormType) {
@@ -60,8 +72,8 @@ export function Login() {
           });
         }
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      setErrorMessage(error?.response?.data?.message);
     }
   }
 
@@ -72,11 +84,58 @@ export function Login() {
   return (
     <LoginContainer>
       <LoginForm onSubmit={handleSubmit(handleLogin)}>
-        <input type="text" placeholder="E-mail" {...register('email')} />
-        <input type="password" placeholder="Senha" {...register('password')} />
+        <h2>Login</h2>
+        <Controller
+          control={control}
+          name="email"
+          render={({ field }) => (
+            <>
+              <input
+                type="email"
+                placeholder="E-mail"
+                onChange={field.onChange}
+                value={field.value}
+                defaultValue=""
+                onFocus={() => setErrorMessage('')}
+              />
+              {errors?.email && (
+                <span className="input-warning">{errors?.email?.message}</span>
+              )}
+            </>
+          )}
+        />
+        <Controller
+          control={control}
+          name="password"
+          render={({ field }) => (
+            <>
+              <input
+                defaultValue=""
+                type="password"
+                placeholder="Senha"
+                onChange={field.onChange}
+                value={field.value}
+              />
+              {errors?.password && (
+                <span className="input-warning">
+                  {errors?.password?.message}
+                </span>
+              )}
+            </>
+          )}
+        />
+
         <button type="submit" disabled={isSubmitting}>
           Logar
         </button>
+        {errorMessage && <span className="login-warning">{errorMessage}</span>}
+        <hr />
+        <NewAccountContainer>
+          <span>Ainda não possui cadastro?</span>
+          <Link to="/auth/cadastro" className="link-register">
+            Clique para fazer cadastro
+          </Link>
+        </NewAccountContainer>
       </LoginForm>
     </LoginContainer>
   );

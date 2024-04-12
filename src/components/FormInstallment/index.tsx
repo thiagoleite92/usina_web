@@ -162,7 +162,6 @@ export function FormInstallment({
           <Controller
             control={control}
             name="value"
-            defaultValue="2"
             render={({ field }) => (
               <input type="text" placeholder="Valor" {...field} />
             )}
