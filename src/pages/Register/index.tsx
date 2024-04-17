@@ -1,10 +1,4 @@
 import { z } from 'zod';
-import {
-  NewAccountContainer,
-  RegisterContainer,
-  RegisterForm,
-  ResidenceContainer,
-} from './styles';
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { api } from '../../lib/axios';
@@ -15,6 +9,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { UnitSelect } from '../../components/Select';
 import { blocks } from '../../const/blocks';
 import { useWindowSize } from '../../hooks/useWindowSize';
+import { aptos } from '../../const/aptos';
+import { Toast } from '../../lib/toast';
+import {
+  NewAccountContainer,
+  RegisterContainer,
+  RegisterForm,
+  ResidenceContainer,
+} from './styles';
 
 const registerFormSchema = z
   .object({
@@ -36,11 +38,20 @@ const registerFormSchema = z
       required_error: 'Insira confirmação de senha',
     }),
     residence: z.object({
-      bloco: z.object({
-        label: z.string({ required_error: 'Selecione o Bloco' }),
-        value: z.string({ required_error: 'Selecione o Bloco' }),
-      }),
-      apto: z.string({ required_error: 'Digite o apartamento' }),
+      bloco: z.object(
+        {
+          label: z.string({ required_error: 'Selecione o Bloco' }),
+          value: z.string({ required_error: 'Selecione o Bloco' }),
+        },
+        { required_error: 'Selecione o Bloco' }
+      ),
+      apto: z.object(
+        {
+          label: z.string({ required_error: 'Selecione o Apartamento' }),
+          value: z.string({ required_error: 'Selecione o Apartamento' }),
+        },
+        { required_error: 'Selecione o Apartamento' }
+      ),
     }),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -70,15 +81,15 @@ export function Register() {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { isSubmitting, errors },
   } = useForm<RegisterFormType>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      residence: { apto: '', bloco: { label: '', value: '' } },
+      name: 'THiago Leite',
+      email: 'leite.tjs@gmail.com',
+      password: 'Senha@123',
+      confirmPassword: 'Senha@123',
     },
   });
 
@@ -86,14 +97,24 @@ export function Register() {
     const { email, password, name, residence } = data;
 
     try {
-      const { data } = await api.post('/user', {
+      await api.post('/user', {
         email,
         password,
         name,
-        residence,
+        residence: {
+          bloco: residence?.bloco?.value,
+          apto: residence?.apto?.value,
+        },
       });
+
+      Toast('Cadastro Realizado');
+      navigate('/auth/login');
     } catch (error: unknown) {
-      setErrorMessage(error?.response?.data?.message);
+      if (error?.response?.status === 409) {
+        setError('email', { message: 'E-mail já cadastrado' });
+        Toast('E-mail já cadastrado', 'error');
+        return;
+      }
     }
   }
 
@@ -189,15 +210,15 @@ export function Register() {
             control={control}
             name="residence.bloco"
             render={({ field }) => (
-              <div className="residence-bloco-select">
+              <div className="select-container">
                 <UnitSelect
-                  placeholder="Selecione Bloco"
+                  placeholder="Bloco"
                   onChange={field.onChange}
                   options={blocks}
                 />
                 {errors?.residence?.bloco && (
                   <span className="input-warning">
-                    {errors?.residence?.bloco.message}
+                    {errors?.residence?.bloco?.message}
                   </span>
                 )}
               </div>
@@ -208,14 +229,11 @@ export function Register() {
             control={control}
             name="residence.apto"
             render={({ field }) => (
-              <div className="residence-apto-input">
-                <input
-                  placeholder="Número do Apto"
+              <div className="select-container">
+                <UnitSelect
+                  placeholder="Apartamento"
                   onChange={field.onChange}
-                  value={field.value}
-                  className="input-apto"
-                  minLength={3}
-                  maxLength={3}
+                  options={aptos}
                 />
                 {errors?.residence?.apto && (
                   <span className="input-warning">

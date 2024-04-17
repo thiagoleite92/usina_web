@@ -3,4 +3,6 @@ export interface User {
   email: string;
   name: string;
   role: 'ADMIN' | 'DWELLER';
+  isActive: boolean;
+  residence: string[];
 }

@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import { AuthContext } from '../../hooks/useAuth';
 import { useContextSelector } from 'use-context-selector';
 import { Link, useNavigate } from 'react-router-dom';
+import { Toast } from '../../lib/toast';
 
 const loginFormSchema = z.object({
   email: z
@@ -73,7 +74,7 @@ export function Login() {
         }
       }
     } catch (error: unknown) {
-      setErrorMessage(error?.response?.data?.message);
+      Toast(error?.response?.data?.message, 'error');
     }
   }
 

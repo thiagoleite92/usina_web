@@ -3,5 +3,4 @@ export const columnHeads: string[] = [
   'Valor',
   'Observações',
   'Mês/Ano',
-  'Opções',
 ];

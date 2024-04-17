@@ -5,6 +5,8 @@ export interface AxiosAuthResponse {
       email: string;
       name: string;
       role: 'ADMIN' | 'DWELLER';
+      isActive: boolean;
+      residence: string[];
     };
   };
 }
