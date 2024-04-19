@@ -11,6 +11,8 @@ interface NotActiveUserProps {
 }
 export function NotActiveUser({ user }: NotActiveUserProps) {
   const { width } = useWindowSize();
+  const windowSize = window.innerWidth;
+  console.log(width);
 
   const logout = useContextSelector(AuthContext, (context) => context.logout);
 
@@ -21,7 +23,7 @@ export function NotActiveUser({ user }: NotActiveUserProps) {
   } - Apto ${user?.residence[1]}. Gostaria que minha conta fosse ativada.`;
 
   return (
-    <NotActiveUserContainer width={width}>
+    <NotActiveUserContainer width={width ?? windowSize}>
       <h3>Status</h3>
       <p>Perfil Inativo</p>
       <hr />

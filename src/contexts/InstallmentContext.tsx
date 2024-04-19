@@ -308,12 +308,12 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
   };
 
   useEffect(() => {
-    if (!user || !user.isActive) return;
+    if (!user || !user?.isActive) return;
     fetchInstallments();
   }, [fetchInstallments, user]);
 
   useEffect(() => {
-    if (!user || !user.isActive) return;
+    if (!user || !user?.isActive) return;
     fetchInstallmentCategories();
     fetchInstallmentsPeriodsAvailable();
   }, [fetchInstallmentCategories, fetchInstallmentsPeriodsAvailable, user]);

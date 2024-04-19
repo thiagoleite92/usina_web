@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { breakpoint } from '../../../../const/breakpoint';
 
 interface NotActiveUserContainerProps {
@@ -19,12 +19,16 @@ export const NotActiveUserContainer = styled.div<NotActiveUserContainerProps>`
   padding: 1.5rem;
   gap: 1.5rem;
   border-radius: 6px;
-  width: ${(props) =>
-    props?.width && props.width >= breakpoint ? '50%' : '90%'};
-
-  height: ${(props) =>
-    props?.width && props.width >= breakpoint ? '50%' : '90%'};
-
+  ${(props) =>
+    props?.width && props?.width >= breakpoint
+      ? css`
+          width: 50%;
+          height: 50%;
+        `
+      : css`
+          height: 90%;
+          width: 90%;
+        `};
   hr {
     height: 2px;
     width: 100%;

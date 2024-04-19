@@ -16,7 +16,7 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/auth/login" />;
   }
 
-  if (user && !user.isActive) {
+  if (user && !user?.isActive) {
     return <NotActiveUser user={user} />;
   }
   return children;

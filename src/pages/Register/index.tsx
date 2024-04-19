@@ -86,10 +86,10 @@ export function Register() {
   } = useForm<RegisterFormType>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
-      name: 'THiago Leite',
-      email: 'leite.tjs@gmail.com',
-      password: 'Senha@123',
-      confirmPassword: 'Senha@123',
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
   });
 
