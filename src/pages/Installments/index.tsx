@@ -183,7 +183,6 @@ export function InstallmentsPage() {
           </InstallmentsContainer>
         </>
       )}
-      {!user?.isActive && <InstallmentsContainer>oi</InstallmentsContainer>}
     </>
   );
 }
