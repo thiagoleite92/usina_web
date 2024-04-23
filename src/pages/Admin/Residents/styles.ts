@@ -7,3 +7,11 @@ export const ResidentsContainer = styled.main`
   padding: 0 1.5rem;
   flex: 1;
 `;
+
+export const TitleContainer = styled.div`
+  margin-top: -6rem;
+`;
+
+export const ResidentsTable = styled.table`
+  margin-top: 6rem;
+`;

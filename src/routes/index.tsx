@@ -3,7 +3,7 @@ import { Login } from '../pages/Login';
 import { InstallmentsPage } from '../pages/Installments';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Register } from '../pages/Register';
-import { Residents } from '../pages/Admin/Residents';
+import { ResidentsPage } from '../pages/Admin/Residents';
 
 export function Routes() {
   const routes = useRoutes([
@@ -32,7 +32,7 @@ export function Routes() {
       path: '/admin/moradores',
       element: (
         <ProtectedRoute>
-          <Residents />
+          <ResidentsPage />
         </ProtectedRoute>
       ),
     },

@@ -1,9 +1,14 @@
-import { ResidentsContainer } from './styles';
+import { ResidentsContainer, ResidentsTable, TitleContainer } from './styles';
 
-export function Residents() {
+export function ResidentsPage() {
   return (
-    <>
-      <ResidentsContainer>Moradores</ResidentsContainer>
-    </>
+    <ResidentsContainer>
+      <TitleContainer>
+        <h3>MORADORES</h3>
+      </TitleContainer>
+      <div>
+        <ResidentsTable>oi</ResidentsTable>
+      </div>
+    </ResidentsContainer>
   );
 }
