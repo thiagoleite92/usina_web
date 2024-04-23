@@ -1,6 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog';
 
-import { Header } from '../../components/Header';
 import { Summary } from '../../components/Summary';
 import { SearchForm } from './components/SearchForm';
 import {
@@ -61,9 +60,7 @@ export function InstallmentsPage() {
 
   return (
     <>
-      <Header />
       <Summary />
-
       <InstallmentsContainer>
         <SearchForm />
         <div style={{ overflowX: 'auto' }}>

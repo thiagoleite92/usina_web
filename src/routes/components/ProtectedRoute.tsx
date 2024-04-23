@@ -3,6 +3,8 @@ import { ReactNode } from 'react';
 import { AuthContext } from '../../hooks/useAuth';
 import { useContextSelector } from 'use-context-selector';
 import { NotActiveUser } from '../../pages/Installments/components/NotActiveUser';
+import { Header } from '../../components/Header';
+import { Layout } from '../../components/Layout';
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -19,5 +21,10 @@ export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   if (user && !user?.isActive) {
     return <NotActiveUser user={user} />;
   }
-  return children;
+  return (
+    <Layout>
+      <Header />
+      {children}
+    </Layout>
+  );
 };

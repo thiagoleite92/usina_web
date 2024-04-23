@@ -5,4 +5,5 @@ export const ResidentsContainer = styled.main`
   max-width: 1120px;
   margin: 1rem auto 0;
   padding: 0 1.5rem;
+  flex: 1;
 `;

@@ -3,7 +3,7 @@ import { Login } from '../pages/Login';
 import { InstallmentsPage } from '../pages/Installments';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Register } from '../pages/Register';
-import { Residents } from '../pages/Admin/pages/Residents';
+import { Residents } from '../pages/Admin/Residents';
 
 export function Routes() {
   const routes = useRoutes([
