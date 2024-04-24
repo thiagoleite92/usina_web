@@ -15,7 +15,7 @@ import { AuthContext } from '../../hooks/useAuth';
 import { useWindowSize } from '../../hooks/useWindowSize';
 import { InstallmentCard } from './components/InstallmentCard';
 import { breakpoint } from '../../const/breakpoint';
-import { columnHeads } from '../../const/columnsHead';
+import { columnHeadsInstallments } from '../../const/columnsHeads';
 import { Pencil, Trash } from 'phosphor-react';
 import { DeleteInstallment } from '../../components/DeleteInstallment';
 import { FormInstallment } from '../../components/FormInstallment';
@@ -69,7 +69,7 @@ export function InstallmentsPage() {
               <>
                 <thead>
                   <tr>
-                    {columnHeads.map((head) => (
+                    {columnHeadsInstallments.map((head) => (
                       <th key={head}>{head}</th>
                     ))}
                     {user?.role === 'ADMIN' && <th>Opções</th>}

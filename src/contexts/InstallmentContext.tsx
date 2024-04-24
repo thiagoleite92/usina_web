@@ -286,19 +286,17 @@ export function InstallmentsProvider({ children }: InstallmentsProviderProps) {
   );
 
   const fetchInstallmentsPeriodsAvailable = useCallback(async () => {
-    const response = await api.get(
-      '/installment/periods-available',
+    const response = await api.get('/installment/periods-available', {
+      headers: {
+        Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('token')!),
+      },
+    });
 
-      {
-        headers: {
-          Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('token')!),
-        },
-      }
+    const parsedAvailablePeriods = parseSelectAvailabePeriods(
+      response?.data?.availablePeriods
     );
 
-    const teste = parseSelectAvailabePeriods(response?.data?.availablePeriods);
-
-    setPeriodsAvailable(teste);
+    setPeriodsAvailable(parsedAvailablePeriods);
   }, []);
 
   const deleteInstallment = (installmentId: string) => {

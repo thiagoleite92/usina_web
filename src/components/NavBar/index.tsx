@@ -1,4 +1,3 @@
-import * as Separator from '@radix-ui/react-separator';
 import { NavBarContainer } from './styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { navigation } from './navigation';
@@ -12,28 +11,19 @@ export function NavBar() {
   return (
     <NavBarContainer width={width}>
       <ul>
-        {navigation.map((nav, index) => {
+        {navigation.map((nav) => {
           return (
-            <>
-              <li
-                className={`${
-                  pathname?.includes(nav.pathname) ? 'selected' : ''
-                }`}
-                onClick={() =>
-                  pathname?.includes(nav.pathname) ? '' : navigate(nav.pathname)
-                }
-              >
-                {nav.location}
-              </li>
-
-              {!(index === navigation?.length - 1) && (
-                <Separator.Root
-                  className="SeparatorRoot"
-                  decorative
-                  orientation="vertical"
-                />
-              )}
-            </>
+            <li
+              key={nav?.location}
+              className={`${
+                pathname?.includes(nav?.pathname) ? 'selected' : ''
+              }`}
+              onClick={() =>
+                pathname?.includes(nav?.pathname) ? '' : navigate(nav?.pathname)
+              }
+            >
+              {nav?.location}
+            </li>
           );
         })}
       </ul>
