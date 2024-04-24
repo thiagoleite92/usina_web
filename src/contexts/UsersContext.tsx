@@ -5,41 +5,41 @@ import { AuthContext } from '../hooks/useAuth';
 import { User } from '../types/UserType';
 import { Toast } from '../lib/toast';
 
-interface ResidentsProviderProps {
+interface UsersProviderProps {
   children: ReactNode;
 }
 
-interface ResidentsContextType {
-  residents: User[];
-  handleUserStatus: (residentId: string) => void;
-  handleUserRole: (residentId: string) => void;
+interface UsersContextType {
+  users: User[];
+  handleUserStatus: (userId: string) => void;
+  handleUserRole: (userId: string) => void;
 }
 
-export const ResidentsContext = createContext({} as ResidentsContextType);
+export const UsersContext = createContext({} as UsersContextType);
 
-export function ResidentsProvider({ children }: ResidentsProviderProps) {
+export function UsersProvider({ children }: UsersProviderProps) {
   const user = useContextSelector(AuthContext, (context) => {
     return context.user;
   });
 
-  const [residents, setResidents] = useState<User[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
-  const fetchResidents = useCallback(async () => {
+  const fetchUsers = useCallback(async () => {
     const { data } = await api.get('/user/all', {
       headers: {
         Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('token')!),
       },
     });
 
-    setResidents(data?.users);
+    setUsers(data?.users);
   }, []);
 
   useEffect(() => {
     if (!user || !user.isActive) {
       return;
     }
-    fetchResidents();
-  }, [fetchResidents, user]);
+    fetchUsers();
+  }, [fetchUsers, user]);
 
   const handleUserStatus = async (userId: string) => {
     try {
@@ -49,14 +49,12 @@ export function ResidentsProvider({ children }: ResidentsProviderProps) {
         },
       });
 
-      setResidents((oldState: User[]) => {
+      setUsers((oldState: User[]) => {
         const newState = oldState.slice();
-        const existingResident = newState.find(
-          (resident) => resident?.id === userId
-        );
+        const existingUser = newState.find((user) => user?.id === userId);
 
-        if (existingResident) {
-          existingResident.isActive = !existingResident.isActive;
+        if (existingUser) {
+          existingUser.isActive = !existingUser.isActive;
         }
 
         return newState;
@@ -73,23 +71,21 @@ export function ResidentsProvider({ children }: ResidentsProviderProps) {
     }
   };
 
-  const handleUserRole = async (residentId: string) => {
+  const handleUserRole = async (userId: string) => {
     try {
-      // await api.patch(`/user/${residentId}/role`, {
-      //   headers: {
-      //     Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('token')!),
-      //   },
-      // });
+      await api.patch(`/user/${userId}/role`, {
+        headers: {
+          Authorization: 'Bearer ' + JSON.parse(localStorage.getItem('token')!),
+        },
+      });
 
-      setResidents((oldState: User[]) => {
+      setUsers((oldState: User[]) => {
         const newState = oldState.slice();
-        const existingResident = newState.find(
-          (resident) => resident?.id === residentId
-        );
+        const existingUser = newState.find((user) => user?.id === userId);
 
-        if (existingResident) {
-          existingResident.role =
-            existingResident.role === 'ADMIN' ? 'DWELLER' : 'ADMIN';
+        if (existingUser) {
+          existingUser.role =
+            existingUser.role === 'ADMIN' ? 'DWELLER' : 'ADMIN';
         }
 
         return newState;
@@ -107,10 +103,8 @@ export function ResidentsProvider({ children }: ResidentsProviderProps) {
   };
 
   return (
-    <ResidentsContext.Provider
-      value={{ residents, handleUserStatus, handleUserRole }}
-    >
+    <UsersContext.Provider value={{ users, handleUserStatus, handleUserRole }}>
       {children}
-    </ResidentsContext.Provider>
+    </UsersContext.Provider>
   );
 }

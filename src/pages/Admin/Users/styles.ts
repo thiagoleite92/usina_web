@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const ResidentsContainer = styled.main`
+export const UsersContainer = styled.main`
   width: 100%;
   max-width: 1120px;
   margin: 1rem auto 0;
@@ -14,7 +14,7 @@ export const TitleContainer = styled.div`
   padding-bottom: 0.5rem;
 `;
 
-export const ResidentsTable = styled.table`
+export const UsersTable = styled.table`
   width: 100%;
   border-collapse: separate;
   border-spacing: 0 0.4rem;

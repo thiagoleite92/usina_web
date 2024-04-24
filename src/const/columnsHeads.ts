@@ -5,7 +5,7 @@ export const columnHeadsInstallments: string[] = [
   'Mês/Ano',
 ];
 
-export const columnHeadsResidents: string[] = [
+export const columnHeadsUsers: string[] = [
   'Nome',
   'Email',
   'Atribuição',
