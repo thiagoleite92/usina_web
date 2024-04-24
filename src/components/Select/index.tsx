@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { ControllerRenderProps } from 'react-hook-form';
-import { SelectContainer } from './styles';
+import { NormalSelect, CreatableSelect } from './styles';
 import { useState } from 'react';
 import { useInitialPeriod } from '../../hooks/useInitialPeriod';
 
@@ -34,7 +34,7 @@ export function SelectCreatable({
   };
 
   return (
-    <SelectContainer
+    <CreatableSelect
       onChange={handleChange}
       options={options}
       placeholder={placeholder}
@@ -62,7 +62,7 @@ export function SelectInput({
 
   return (
     options && (
-      <SelectContainer
+      <NormalSelect
         onChange={handleChange}
         options={options}
         placeholder={placeholder}
@@ -78,13 +78,15 @@ export function UnitSelect({
   options,
   placeholder,
   onChange,
+  defaultValue,
 }: {
   placeholder: string;
   options: { value: string | string[]; label: string }[];
   onChange: (e: any) => void;
+  defaultValue: any;
 }) {
   const [value, setValue] = useState<{ label: string; value: string[] } | null>(
-    null
+    defaultValue || null
   );
 
   const handleChange = (e: any) => {
@@ -100,13 +102,14 @@ export function UnitSelect({
 
   return (
     options && (
-      <SelectContainer
+      <NormalSelect
         onChange={handleChange}
         options={options}
         placeholder={placeholder}
         className="react-select-container"
         classNamePrefix="react-select"
         value={value || options[initialOption]}
+        isSearchable={false}
       />
     )
   );

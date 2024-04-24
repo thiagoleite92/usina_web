@@ -78,4 +78,18 @@ export const ResidentsTable = styled.table`
       transform: translateX(19px);
     }
   }
+
+  .btnSaveChanges {
+    border: none;
+    margin-top: 6px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    background-color: ${(props) => props.theme['green-500']};
+    color: ${(props) => props.theme['gray-100']};
+    cursor: pointer;
+
+    &:hover {
+      filter: brightness(0.8);
+    }
+  }
 `;

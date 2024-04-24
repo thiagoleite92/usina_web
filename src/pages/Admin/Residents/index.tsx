@@ -5,13 +5,16 @@ import { ResidentsContainer, ResidentsTable, TitleContainer } from './styles';
 import { columnHeadsResidents } from '../../../const/columnsHeads';
 import { useWindowSize } from '../../../hooks/useWindowSize';
 import { breakpoint } from '../../../const/breakpoint';
+import { UnitSelect } from '../../../components/Select';
+import { RoleEnum } from '../../../enums/RoleEnum';
 
 export function ResidentsPage() {
-  const { residents, handleResidentsStatus } = useContextSelector(
+  const { residents, handleUserStatus, handleUserRole } = useContextSelector(
     ResidentsContext,
-    ({ residents, handleResidentsStatus }) => ({
+    ({ residents, handleUserStatus, handleUserRole }) => ({
       residents,
-      handleResidentsStatus,
+      handleUserStatus,
+      handleUserRole,
     })
   );
 
@@ -38,7 +41,22 @@ export function ResidentsPage() {
                   <tr key={resident?.id}>
                     <td>{resident?.name}</td>
                     <td>{resident?.email}</td>
-                    <td>{resident?.role}</td>
+                    <td>
+                      <UnitSelect
+                        options={[
+                          { label: 'Residente', value: 'DWELLER' },
+                          { label: 'Síndico', value: 'ADMIN' },
+                        ]}
+                        placeholder="Selecione Atribuição"
+                        onChange={() => {
+                          handleUserRole(resident?.id);
+                        }}
+                        defaultValue={{
+                          label: RoleEnum[resident.role],
+                          value: resident?.role,
+                        }}
+                      />
+                    </td>
                     <td>
                       {resident?.residence[0]?.toUpperCase()} -{' '}
                       {resident?.residence[1]}
@@ -47,7 +65,7 @@ export function ResidentsPage() {
                       <Switch.Root
                         className="SwitchRoot"
                         checked={resident.isActive}
-                        onClick={() => handleResidentsStatus(resident?.id)}
+                        onClick={() => handleUserStatus(resident?.id)}
                       >
                         <Switch.Thumb className="SwitchThumb" />
                       </Switch.Root>

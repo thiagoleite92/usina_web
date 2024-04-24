@@ -11,6 +11,8 @@ export const SummaryContainer = styled.section`
   gap: 2rem;
   margin-top: -6rem;
   overflow-x: auto;
+  height: fit-content;
+  min-height: 120px;
 `;
 
 interface SummaryCardProps {

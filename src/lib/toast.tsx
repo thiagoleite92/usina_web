@@ -1,7 +1,11 @@
 import { CheckCircle, WarningCircle } from 'phosphor-react';
 import { toast } from 'react-toastify';
 
-export const Toast = (message: string, type: 'success' | 'error' = 'success') =>
+export const Toast = (
+  message: string,
+  type: 'success' | 'error' = 'success',
+  options = {}
+) =>
   toast[type](
     <div
       style={{
@@ -15,5 +19,6 @@ export const Toast = (message: string, type: 'success' | 'error' = 'success') =>
       {message}
       {type === 'success' && <CheckCircle size={24} />}
       {type === 'error' && <WarningCircle size={24} />}
-    </div>
+    </div>,
+    { ...options }
   );

@@ -9,6 +9,7 @@ interface NavBarContainerProps {
 export const NavBarContainer = styled.nav<NavBarContainerProps>`
   width: 100%;
   max-width: 1120px;
+  padding: 0 24px;
 
   ul {
     color: ${(props) => props.theme['white']};
