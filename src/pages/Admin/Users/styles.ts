@@ -12,6 +12,7 @@ export const TitleContainer = styled.div`
   width: 100%;
   border-bottom: 1px solid ${(props) => props.theme['gray-100']};
   padding-bottom: 0.5rem;
+  margin-top: -6rem;
 `;
 
 export const UsersTable = styled.table`

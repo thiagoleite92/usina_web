@@ -37,6 +37,10 @@ export const NavBarContainer = styled.nav<NavBarContainerProps>`
       list-style: none;
       cursor: pointer;
       padding: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
 
     .SeparatorRoot {

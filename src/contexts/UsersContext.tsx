@@ -60,14 +60,10 @@ export function UsersProvider({ children }: UsersProviderProps) {
         return newState;
       });
 
-      Toast(`Status atualizado.`, 'success', {
-        position: 'bottom-right',
-      });
+      Toast(`Status atualizado.`, 'success');
     } catch (error) {
       console.log(error);
-      Toast(`Ocorreu um erro. Tente novamente`, 'error', {
-        position: 'bottom-right',
-      });
+      Toast(`Ocorreu um erro. Tente novamente`, 'error');
     }
   };
 

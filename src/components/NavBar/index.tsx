@@ -2,6 +2,7 @@ import { NavBarContainer } from './styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { navigation } from './navigation';
 import { useWindowSize } from '../../hooks/useWindowSize';
+import { RenderIcons } from '../RenderIcons';
 
 export function NavBar() {
   const { pathname } = useLocation();
@@ -23,6 +24,7 @@ export function NavBar() {
               }
             >
               {nav?.location}
+              <RenderIcons icon={nav?.icon} size={24} />
             </li>
           );
         })}

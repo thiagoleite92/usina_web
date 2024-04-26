@@ -6,9 +6,12 @@ import { FormInstallment } from '../FormInstallment';
 import { useState } from 'react';
 import { useContextSelector } from 'use-context-selector';
 import { AuthContext } from '../../hooks/useAuth';
+import { useLocation } from 'react-router-dom';
 
 export function Header() {
   const user = useContextSelector(AuthContext, (context) => context?.user);
+
+  const { pathname } = useLocation();
 
   const [formDialog, setFormDialog] = useState(false);
 
@@ -23,7 +26,7 @@ export function Header() {
 
         {/* <img src={logoImg} alt="" /> */}
 
-        {user?.role === 'ADMIN' && (
+        {user?.role === 'ADMIN' && pathname?.includes('/home') && (
           <Dialog.Root open={formDialog}>
             <Dialog.Trigger asChild>
               <NewInstallmentButton

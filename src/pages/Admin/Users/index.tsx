@@ -45,7 +45,7 @@ export function UsersPage() {
                     <td>
                       <UnitSelect
                         options={[
-                          { label: 'Usere', value: 'DWELLER' },
+                          { label: 'Residente', value: 'DWELLER' },
                           { label: 'Síndico', value: 'ADMIN' },
                         ]}
                         placeholder="Selecione Atribuição"
@@ -80,7 +80,14 @@ export function UsersPage() {
       {width && width < breakpoint && (
         <>
           {users?.map((resident) => {
-            return <UserCard {...resident} key={resident.id} />;
+            return (
+              <UserCard
+                {...resident}
+                key={resident.id}
+                handleUserStatus={handleUserStatus}
+                handleUserRole={handleUserRole}
+              />
+            );
           })}
         </>
       )}
