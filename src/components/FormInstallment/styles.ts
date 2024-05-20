@@ -12,7 +12,7 @@ export const Overlay = styled(Dialog.Overlay)`
 `;
 
 interface DialogContentProps {
-  width: number;
+  width: number | undefined;
 }
 
 export const Content = styled(Dialog.Content)<DialogContentProps>`

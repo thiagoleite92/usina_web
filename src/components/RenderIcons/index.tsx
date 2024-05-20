@@ -11,5 +11,5 @@ export function RenderIcons({ icon, size }: RenderIconsProps) {
     residents: <UsersFour size={size} />,
   };
 
-  return icons[icon];
+  return icons[icon as keyof typeof icons];
 }

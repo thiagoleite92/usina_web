@@ -17,6 +17,7 @@ import {
   RegisterForm,
   ResidenceContainer,
 } from './styles';
+import axios from 'axios';
 
 const registerFormSchema = z
   .object({
@@ -110,10 +111,12 @@ export function Register() {
       Toast('Cadastro Realizado');
       navigate('/auth/login');
     } catch (error: unknown) {
-      if (error?.response?.status === 409) {
-        setError('email', { message: 'E-mail já cadastrado' });
-        Toast('E-mail já cadastrado', 'error');
-        return;
+      if (axios.isAxiosError(error)) {
+        if (error?.response?.status === 409) {
+          setError('email', { message: 'E-mail já cadastrado' });
+          Toast('E-mail já cadastrado', 'error');
+          return;
+        }
       }
     }
   }
