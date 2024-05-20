@@ -1,8 +1,10 @@
 import styled from 'styled-components';
 
-export const SerachFormContainer = styled.form`
+export const SearchFormContainer = styled.form`
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
+  width: 100%;
+
   input {
     flex: 1;
     border-radius: 6px;
@@ -10,7 +12,7 @@ export const SerachFormContainer = styled.form`
     background: ${(props) => props.theme['gray-900']};
     color: ${(props) => props.theme['white']};
 
-    padding: 1rem;
+    padding: 0.5rem;
 
     &::placeholder {
       color: ${(props) => props.theme['gray-500']};

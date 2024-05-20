@@ -3,6 +3,8 @@ import styled from 'styled-components';
 export const HeaderContainer = styled.header`
   background: ${(props) => props.theme['gray-900']};
   padding: 2.5rem 0 7.5rem;
+  width: 100%;
+  margin: 0 auto;
 `;
 
 export const HeaderContent = styled.div`
@@ -16,7 +18,7 @@ export const HeaderContent = styled.div`
   align-items: center;
 `;
 
-export const NewTransactionButton = styled.button`
+export const NewInstallmentButton = styled.button`
   height: 50px;
   border: 0;
   background: ${(props) => props.theme['green-500']};

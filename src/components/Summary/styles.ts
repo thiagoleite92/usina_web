@@ -9,7 +9,10 @@ export const SummaryContainer = styled.section`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
-  margin-top: -5rem;
+  margin-top: -6rem;
+  overflow-x: auto;
+  height: fit-content;
+  min-height: 120px;
 `;
 
 interface SummaryCardProps {
@@ -19,7 +22,7 @@ interface SummaryCardProps {
 export const SummaryCard = styled.div<SummaryCardProps>`
   background: ${(props) => props.theme['gray-600']};
   border-radius: 6px;
-  padding: 2rem;
+  padding: 1rem;
 
   header {
     display: flex;
@@ -37,7 +40,7 @@ export const SummaryCard = styled.div<SummaryCardProps>`
 
   strong {
     display: block;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
     font-size: 2rem;
   }
 
