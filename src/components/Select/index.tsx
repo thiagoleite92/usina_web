@@ -83,11 +83,14 @@ export function UnitSelect({
   placeholder: string;
   options: { value: string | string[]; label: string }[];
   onChange: (e: any) => void;
-  defaultValue: any;
+  defaultValue?:
+    | { label: string; value: string }
+    | { label: string; value: string[] }
+    | null;
 }) {
-  const [value, setValue] = useState<{ label: string; value: string[] } | null>(
-    defaultValue || null
-  );
+  const [value, setValue] = useState<
+    { label: string; value: string } | { label: string; value: string[] } | null
+  >(defaultValue || null);
 
   const handleChange = (e: any) => {
     setValue({ value: e?.value, label: e?.label });

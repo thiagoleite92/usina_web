@@ -10,6 +10,7 @@ import { AuthContext } from '../../hooks/useAuth';
 import { useContextSelector } from 'use-context-selector';
 import { Link, useNavigate } from 'react-router-dom';
 import { Toast } from '../../lib/toast';
+import axios from 'axios';
 
 const loginFormSchema = z.object({
   email: z
@@ -74,7 +75,13 @@ export function Login() {
         }
       }
     } catch (error: unknown) {
-      Toast(error?.response?.data?.message, 'error');
+      if (axios.isAxiosError(error)) {
+        if (error?.response?.status === 409) {
+          Toast(error?.response?.data?.message, 'error');
+
+          return;
+        }
+      }
     }
   }
 

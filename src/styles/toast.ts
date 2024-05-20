@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components';
 import { breakpoint } from '../const/breakpoint';
 
 interface ToastContainerProps {
-  width: number;
+  width: number | undefined;
 }
 
 export const GlobalToast = styled(ToastContainer)<ToastContainerProps>`
