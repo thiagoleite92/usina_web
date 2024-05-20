@@ -1,4 +1,4 @@
-import { SignOut, User, UserGear } from 'phosphor-react';
+import { SignOut, User } from 'phosphor-react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Option, UserButton } from './styles';
 import { useContextSelector } from 'use-context-selector';
@@ -17,11 +17,6 @@ export function Profile() {
 
       <DropdownMenu.Portal>
         <DropdownMenu.Content className="DropdownMenuContent" sideOffset={-5}>
-          <DropdownMenu.Item className="DropdownMenuItem">
-            <Option onClick={() => console.log('oi')}>
-              Administrador <UserGear size={24} />
-            </Option>
-          </DropdownMenu.Item>
           <DropdownMenu.Item className="DropdownMenuItem">
             <Option onClick={logout}>
               Sair <SignOut size={24} />
